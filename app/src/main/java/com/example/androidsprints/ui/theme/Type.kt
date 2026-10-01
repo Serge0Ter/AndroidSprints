@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 val recipesAppTypography = Typography(
@@ -50,10 +49,10 @@ val recipesAppTypography = Typography(
 @Preview(showBackground = true)
 @Composable
 fun TypographyPreview() {
-    AndroidSprintsTheme {
+    RecipesAppTheme {
         Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier.padding(Dimens.padding16),
+            verticalArrangement = Arrangement.spacedBy(Dimens.spaceBy)
         ) {
             Text("displayLarge - Заголовки экранов", style = MaterialTheme.typography.displayLarge)
             Text(

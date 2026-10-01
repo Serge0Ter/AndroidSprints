@@ -21,7 +21,9 @@ private val LightColorScheme = lightColorScheme(
     surfaceVariant = SurfaceVariantColor,
     onSurface = TextPrimaryColor,
     onBackground = TextPrimaryColor,
-    onSurfaceVariant = TextSecondaryColor
+    onSurfaceVariant = TextSecondaryColor,
+    onPrimary = SurfaceColor,
+    onError = SurfaceColor
 )
 private val DarkColorScheme = darkColorScheme(
     primary = PrimaryColorDark,
@@ -34,7 +36,9 @@ private val DarkColorScheme = darkColorScheme(
     surfaceVariant = SurfaceVariantColorDark,
     onSurface = TextPrimaryColorDark,
     onBackground = TextPrimaryColorDark,
-    onSurfaceVariant = TextSecondaryColorDark
+    onSurfaceVariant = TextSecondaryColorDark,
+    onPrimary = SurfaceColorDark,
+    onError = SurfaceColorDark
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -48,7 +52,7 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 @Composable
-fun AndroidSprintsTheme(
+fun RecipesAppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = false,
