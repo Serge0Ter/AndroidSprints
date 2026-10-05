@@ -51,8 +51,8 @@ val recipesAppTypography = Typography(
 fun TypographyPreview() {
     RecipesAppTheme {
         Column(
-            modifier = Modifier.padding(Dimens.padding16),
-            verticalArrangement = Arrangement.spacedBy(Dimens.spaceBy)
+            modifier = Modifier.padding(Dimens.PaddingMain),
+            verticalArrangement = Arrangement.spacedBy(Dimens.PaddingMedium)
         ) {
             Text("displayLarge - Заголовки экранов", style = MaterialTheme.typography.displayLarge)
             Text(
