@@ -31,7 +31,7 @@ fun BottomNavigation(onCategoriesClick: () -> Unit, onFavoriteClick: () -> Unit)
     ) {
         Button(
             modifier = Modifier.weight(1f),
-            shape = RoundedCornerShape(Dimens.RoundedCorner),
+            shape = RoundedCornerShape(Dimens.RoundedCorner6),
             onClick = onCategoriesClick,
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.tertiary
@@ -44,7 +44,7 @@ fun BottomNavigation(onCategoriesClick: () -> Unit, onFavoriteClick: () -> Unit)
         }
         Button(
             modifier = Modifier.weight(1f),
-            shape = RoundedCornerShape(Dimens.RoundedCorner),
+            shape = RoundedCornerShape(Dimens.RoundedCorner6),
             onClick = onFavoriteClick,
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.error
