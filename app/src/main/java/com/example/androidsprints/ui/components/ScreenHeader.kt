@@ -22,9 +22,10 @@ fun ScreenHeader(
     imagePainter: Painter,
     contentDescription: String,
     title: String,
+    modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = Modifier.height(Dimens.HeaderHeight)
+        modifier = modifier.height(Dimens.HeaderHeight)
     ) {
         Image(
             modifier = Modifier.fillMaxSize(),
