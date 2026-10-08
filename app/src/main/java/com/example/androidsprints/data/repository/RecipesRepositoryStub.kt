@@ -33,13 +33,13 @@ private val categories = listOf(
         id = 4,
         title = "Супы",
         description = "От классики до экзотики: мир в одной тарелке",
-        imageUrl = "soup.jpg"
+        imageUrl = "soup.png"
     ),
     CategoryDto(
         id = 5,
         title = "Салаты",
         description = "Хрустящий калейдоскоп под соусом вдохновения",
-        imageUrl = "salad.jpg"
+        imageUrl = "salad.png"
     )
 )
 
@@ -153,7 +153,7 @@ private val burgerRecipes = listOf(
     )
 )
 
-fun getCategory(): List<CategoryDto> = categories
+fun getCategories(): List<CategoryDto> = categories
 
 fun getRecipesByCategoryId(categoryId: Int): List<RecipeDto> {
     return when (categoryId) {
