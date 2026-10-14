@@ -1,20 +1,48 @@
 package com.example.androidsprints.ui.categories
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.example.androidsprints.R
 import com.example.androidsprints.ScreenId
+import com.example.androidsprints.data.repository.getCategories
+import com.example.androidsprints.ui.categories.model.toUiModel
 import com.example.androidsprints.ui.components.ScreenHeader
+import com.example.androidsprints.ui.theme.Dimens
 
 @Composable
-fun CategoriesScreen(modifier: Modifier) {
+fun CategoriesScreen(
+    modifier: Modifier = Modifier,
+    onCategoryClick: (Int) -> Unit,
+) {
+    val categories = remember { getCategories().map { it.toUiModel() } }
     Column(modifier = modifier) {
         ScreenHeader(
             imagePainter = painterResource(id = R.drawable.categories),
             contentDescription = ScreenId.CATEGORIES.title,
             title = ScreenId.CATEGORIES.title,
         )
+        LazyVerticalGrid(
+            modifier = Modifier.weight(1f),
+            columns = GridCells.Fixed(2),
+            contentPadding = PaddingValues(Dimens.PaddingMain),
+            horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingMain),
+            verticalArrangement = Arrangement.spacedBy(Dimens.PaddingMain),
+        ) {
+            items(categories, key = { category -> category.id }) { category ->
+                CategoryItem(
+                    category = category,
+                    onClick = { onCategoryClick(category.id) },
+                )
+            }
+
+        }
     }
 }
