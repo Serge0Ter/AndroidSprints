@@ -20,6 +20,7 @@ import com.example.androidsprints.ui.theme.RecipesAppTheme
 fun RecipesApp() {
     RecipesAppTheme {
         var currentScreen by remember { mutableStateOf(ScreenId.CATEGORIES) }
+        var selectedCategoryId by remember { mutableStateOf<Int?>(null) }
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             bottomBar = {
@@ -33,7 +34,9 @@ fun RecipesApp() {
                     ScreenId.CATEGORIES -> {
                         CategoriesScreen(
                             modifier = Modifier.padding(innerPadding),
-                            onCategoryClick = {}
+                            onCategoryClick = { categoryId ->
+                                selectedCategoryId = categoryId
+                            }
                         )
                     }
 

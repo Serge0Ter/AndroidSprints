@@ -2,21 +2,24 @@ package com.example.androidsprints.ui.categories
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.example.androidsprints.R
 import com.example.androidsprints.ui.categories.model.CategoryUiModel
 import com.example.androidsprints.ui.theme.Dimens
 import com.example.androidsprints.ui.theme.recipesAppTypography
@@ -30,18 +33,26 @@ fun CategoryItem(
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(Dimens.RoundedCorner8),
-        onClick = onClick
+        onClick = onClick,
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = Dimens.PaddingSmall
+        ),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        )
     ) {
         AsyncImage(
             modifier = Modifier
-                .height(Dimens.HeaderHeight)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .aspectRatio(1.2f),
             contentScale = ContentScale.Crop,
             model = ImageRequest.Builder(LocalContext.current)
                 .data(category.imageUrl)
                 .crossfade(true)
                 .build(),
-            contentDescription = null
+            contentDescription = null,
+            placeholder = painterResource(R.drawable.loading),
+            error = painterResource(R.drawable.error)
         )
         Column(
             modifier = Modifier.padding(Dimens.PaddingMedium),
