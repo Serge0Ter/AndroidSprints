@@ -26,6 +26,7 @@ import com.example.androidsprints.ui.theme.Dimens
 fun RecipesScreen(
     categoryId: Int,
     categoryTitle: String,
+    onRecipeClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var recipes by remember { mutableStateOf<List<RecipeUiModel>>(emptyList()) }
@@ -47,7 +48,7 @@ fun RecipesScreen(
             items(recipes, key = { it.id }) { recipe ->
                 RecipeItem(
                     recipe = recipe,
-                    onClick = {}
+                    onClick = onRecipeClick
                 )
             }
         }
