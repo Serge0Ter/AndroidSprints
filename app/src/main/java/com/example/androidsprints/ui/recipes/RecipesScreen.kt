@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.example.androidsprints.R
 import com.example.androidsprints.ScreenId
+import com.example.androidsprints.data.repository.getCategories
 import com.example.androidsprints.data.repository.getRecipesByCategoryId
 import com.example.androidsprints.ui.components.ScreenHeader
 import com.example.androidsprints.ui.recipes.model.RecipeUiModel
@@ -25,11 +26,11 @@ import com.example.androidsprints.ui.theme.Dimens
 @Composable
 fun RecipesScreen(
     categoryId: Int,
-    categoryTitle: String,
     onRecipeClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var recipes by remember { mutableStateOf<List<RecipeUiModel>>(emptyList()) }
+    val title = remember(categoryId) { getCategories().firstOrNull { categoryId == it.id }?.title.orEmpty() }
     LaunchedEffect(categoryId) {
         recipes = getRecipesByCategoryId(categoryId).map { it.toUiModel() }
     }
@@ -38,7 +39,7 @@ fun RecipesScreen(
         ScreenHeader(
             imagePainter = painterResource(id = R.drawable.categories),
             contentDescription = ScreenId.RECIPES.title,
-            title = categoryTitle
+            title = title
         )
         LazyColumn(
             modifier = Modifier.fillMaxSize(),

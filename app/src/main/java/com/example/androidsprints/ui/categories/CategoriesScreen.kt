@@ -20,7 +20,7 @@ import com.example.androidsprints.ui.theme.Dimens
 @Composable
 fun CategoriesScreen(
     modifier: Modifier = Modifier,
-    onCategoryClick: (Int, String) -> Unit,
+    onCategoryClick: (Int) -> Unit,
 ) {
     val categories = remember { getCategories().map { it.toUiModel() } }
     Column(modifier = modifier) {
@@ -39,7 +39,7 @@ fun CategoriesScreen(
             items(categories, key = { category -> category.id }) { category ->
                 CategoryItem(
                     category = category,
-                    onClick = { onCategoryClick(category.id, category.title) },
+                    onClick = { onCategoryClick(category.id) },
                 )
             }
 
