@@ -1,5 +1,6 @@
 package com.example.androidsprints.ui.navigation
 
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -8,8 +9,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.androidsprints.ui.categories.CategoriesScreen
+import com.example.androidsprints.ui.details.RecipeDetailsScreen
 import com.example.androidsprints.ui.favorites.FavoritesScreen
 import com.example.androidsprints.ui.recipes.RecipesScreen
+import com.example.androidsprints.ui.recipes.model.RecipeUiModel
 
 @Composable
 fun RecipesNavHost(
@@ -38,8 +41,24 @@ fun RecipesNavHost(
             val categoryId = it.arguments?.getInt("categoryId") ?: 0
             RecipesScreen(
                 categoryId = categoryId,
-                onRecipeClick = {}
+                onRecipeClick = { recipeId, recipe ->
+                    navController.currentBackStackEntry?.savedStateHandle?.set(
+                        Destination.RecipeDetails.KEY_RECIPE_OBJECT,
+                        recipe
+                    )
+                    navController.navigate(Destination.RecipeDetails.createRoute(recipeId))
+                }
             )
+        }
+        composable(
+            route = Destination.RecipeDetails.route,
+            arguments = listOf(navArgument("recipeId") { type = NavType.IntType })
+        ) {
+            val recipe =
+                navController.previousBackStackEntry?.savedStateHandle?.get<RecipeUiModel>(
+                    Destination.RecipeDetails.KEY_RECIPE_OBJECT
+                )
+            if (recipe == null) Text(text = "Рецепт не найден") else RecipeDetailsScreen(recipe = recipe)
         }
     }
 }

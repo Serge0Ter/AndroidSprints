@@ -10,8 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import com.example.androidsprints.R
-import com.example.androidsprints.ScreenId
 import com.example.androidsprints.data.repository.getCategories
 import com.example.androidsprints.ui.categories.model.toUiModel
 import com.example.androidsprints.ui.components.ScreenHeader
@@ -26,8 +26,8 @@ fun CategoriesScreen(
     Column(modifier = modifier) {
         ScreenHeader(
             imagePainter = painterResource(id = R.drawable.categories),
-            contentDescription = ScreenId.CATEGORIES.title,
-            title = ScreenId.CATEGORIES.title,
+            contentDescription = stringResource(R.string.categories),
+            title = stringResource(R.string.categories),
         )
         LazyVerticalGrid(
             modifier = Modifier.weight(1f),

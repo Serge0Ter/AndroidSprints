@@ -26,11 +26,12 @@ import com.example.androidsprints.ui.theme.Dimens
 @Composable
 fun RecipesScreen(
     categoryId: Int,
-    onRecipeClick: (Int) -> Unit,
+    onRecipeClick: (Int, RecipeUiModel) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var recipes by remember { mutableStateOf<List<RecipeUiModel>>(emptyList()) }
-    val title = remember(categoryId) { getCategories().firstOrNull { categoryId == it.id }?.title.orEmpty() }
+    val title =
+        remember(categoryId) { getCategories().firstOrNull { categoryId == it.id }?.title.orEmpty() }
     LaunchedEffect(categoryId) {
         recipes = getRecipesByCategoryId(categoryId).map { it.toUiModel() }
     }
@@ -49,7 +50,7 @@ fun RecipesScreen(
             items(recipes, key = { it.id }) { recipe ->
                 RecipeItem(
                     recipe = recipe,
-                    onClick = onRecipeClick
+                    onClick = { onRecipeClick(recipe.id, recipe) }
                 )
             }
         }
