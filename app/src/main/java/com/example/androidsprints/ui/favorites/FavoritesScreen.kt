@@ -6,11 +6,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.example.androidsprints.R
 import com.example.androidsprints.ScreenId
-import com.example.androidsprints.ui.recipes.RecipesScreen
 import com.example.androidsprints.ui.components.ScreenHeader
 
 @Composable
-fun FavoritesScreen(modifier: Modifier) {
+fun FavoritesScreen(modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
         ScreenHeader(
             imagePainter = painterResource(id = R.drawable.bcg_favorites),
