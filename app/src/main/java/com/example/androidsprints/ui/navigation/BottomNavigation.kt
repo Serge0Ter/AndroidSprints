@@ -15,8 +15,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.androidsprints.ScreenId
+import com.example.androidsprints.R
 import com.example.androidsprints.ui.theme.Dimens
 import com.example.androidsprints.ui.theme.recipesAppTypography
 
@@ -38,7 +39,7 @@ fun BottomNavigation(onCategoriesClick: () -> Unit, onFavoriteClick: () -> Unit)
             )
         ) {
             Text(
-                text = ScreenId.CATEGORIES.title.uppercase(),
+                text = stringResource(R.string.categories).uppercase(),
                 style = recipesAppTypography.titleMedium
             )
         }
@@ -51,12 +52,12 @@ fun BottomNavigation(onCategoriesClick: () -> Unit, onFavoriteClick: () -> Unit)
             )
         ) {
             Text(
-                text = ScreenId.FAVORITES.title.uppercase(),
+                text = stringResource(R.string.favorites).uppercase(),
                 style = recipesAppTypography.titleMedium,
             )
             Icon(
                 imageVector = Icons.Outlined.FavoriteBorder,
-                contentDescription = ScreenId.FAVORITES.title
+                contentDescription = stringResource(R.string.favorites)
             )
         }
     }

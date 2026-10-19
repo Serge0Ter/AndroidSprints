@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.androidsprints.ui.navigation.BottomNavigation
 import com.example.androidsprints.ui.navigation.Destination
 import com.example.androidsprints.ui.navigation.RecipesNavHost
+import com.example.androidsprints.ui.navigation.navigateToTab
 import com.example.androidsprints.ui.theme.RecipesAppTheme
 
 @Composable
@@ -20,8 +21,8 @@ fun RecipesApp() {
             modifier = Modifier.fillMaxSize(),
             bottomBar = {
                 BottomNavigation(
-                    onCategoriesClick = { navController.navigate(Destination.Categories.route) },
-                    onFavoriteClick = { navController.navigate(Destination.Favorites.route) }
+                    onCategoriesClick = { navController.navigateToTab(Destination.Categories) },
+                    onFavoriteClick = { navController.navigateToTab(Destination.Favorites) }
                 )
             },
             content = { innerPadding ->
