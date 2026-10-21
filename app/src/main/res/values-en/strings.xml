@@ -4,4 +4,10 @@
     <string name="categories">Categories</string>
     <string name="favorites">Favorites</string>
     <string name="recipes">Recipes</string>
+    <plurals name="portions_count">
+        <item quantity="one">%d portion</item>
+        <item quantity="other">%d portions</item>
+    </plurals>
+    <string name="ingredients">Ingredients</string>
+    <string name="cooking_method">Сooking method</string>
 </resources>

@@ -3,4 +3,12 @@
     <string name="categories">Категории</string>
     <string name="favorites">Избранное</string>
     <string name="recipes">Рецепты</string>
+    <string name="ingredients">Ингредиенты</string>
+    <string name="cooking_method">Способ приготовления</string>
+    <plurals name="portions_count">
+        <item quantity="one">%d порция</item>
+        <item quantity="few">%d порции</item>
+        <item quantity="many">%d порций</item>
+        <item quantity="other">%d порции</item>
+    </plurals>
 </resources>
