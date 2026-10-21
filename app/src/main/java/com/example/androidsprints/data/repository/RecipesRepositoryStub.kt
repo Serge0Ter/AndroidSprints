@@ -105,7 +105,8 @@ private val burgerRecipes = listOf(
             "4. Смазать нижние половинки булочек горчицей и кетчупом, затем положите лист салата, котлету, кольца помидора и закройте верхней половинкой булочки.",
             "5. Подавайте бургеры горячими с картофельными чипсами или картофельным пюре."
         ),
-        imageUrl = "burger-hamburger.png"
+        imageUrl = "burger-hamburger.png",
+        serving = 4
     ),
     RecipeDto(
         id = 1,
@@ -149,7 +150,8 @@ private val burgerRecipes = listOf(
             "4. Соберите бургер: булочка, майонез, котлета с сыром, бекон, помидор, кетчуп.",
             "5. Подавайте горячими."
         ),
-        imageUrl = "burger-cheeseburger.png"
+        imageUrl = "burger-cheeseburger.png",
+        serving = 4
     )
 )
 
@@ -161,3 +163,4 @@ fun getRecipesByCategoryId(categoryId: Int): List<RecipeDto> {
         else -> emptyList()
     }
 }
+fun getRecipeById(recipeId: Int): RecipeDto? = burgerRecipes.firstOrNull { it.id == recipeId }
