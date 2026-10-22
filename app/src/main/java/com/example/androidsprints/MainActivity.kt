@@ -13,7 +13,7 @@ class MainActivity : ComponentActivity() {
     private var deepLinkIntent by mutableStateOf<Intent?>(null)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        intent?.data?.let { _ ->
+        if (savedInstanceState == null && intent?.data != null) {
             deepLinkIntent = intent
         }
         enableEdgeToEdge()
