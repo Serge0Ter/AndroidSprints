@@ -10,4 +10,5 @@
     </plurals>
     <string name="ingredients">Ingredients</string>
     <string name="cooking_method">Сooking method</string>
+    <string name="share">Share</string>
 </resources>

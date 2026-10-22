@@ -1,5 +1,6 @@
 package com.example.androidsprints
 
+import android.content.Intent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -14,7 +15,10 @@ import com.example.androidsprints.ui.navigation.navigateToTab
 import com.example.androidsprints.ui.theme.RecipesAppTheme
 
 @Composable
-fun RecipesApp() {
+fun RecipesApp(
+    deepLinkIntent: Intent?,
+    onDeepLink: () -> Unit
+) {
     RecipesAppTheme {
         val navController = rememberNavController()
         Scaffold(
@@ -27,6 +31,8 @@ fun RecipesApp() {
             },
             content = { innerPadding ->
                 RecipesNavHost(
+                    deepLink = deepLinkIntent,
+                    onDeepLink = onDeepLink,
                     navController = navController,
                     modifier = Modifier.padding(innerPadding)
                 )
@@ -37,5 +43,8 @@ fun RecipesApp() {
 @Preview(showBackground = true)
 @Composable
 fun RecipesAppPreviews() {
-    RecipesApp()
+    RecipesApp(
+        deepLinkIntent = null,
+        onDeepLink = {}
+    )
 }

@@ -19,7 +19,7 @@ fun IngredientItem(ingredient: IngredientUiModel, modifier: Modifier = Modifier)
                 text = ingredient.name.uppercase()
             )
             Text(
-                text = ingredient.quantity.uppercase()
+                text = ingredient.quantity.uppercase().plus(" ")
             )
             Text(
                 text = ingredient.unitOfMeasure.uppercase()

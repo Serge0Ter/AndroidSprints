@@ -1,9 +1,11 @@
 package com.example.androidsprints.ui.details
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -15,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -29,10 +32,12 @@ import com.example.androidsprints.ui.components.ScreenHeader
 import com.example.androidsprints.ui.recipes.model.toUiModel
 import com.example.androidsprints.ui.theme.Dimens
 import com.example.androidsprints.ui.theme.recipesAppTypography
+import com.example.androidsprints.ui.utils.shareRecipe
 import kotlin.math.roundToInt
 
 @Composable
 fun RecipeDetailsScreen(recipeId: Int, modifier: Modifier = Modifier) {
+    val context = LocalContext.current
     val recipe = getRecipeById(recipeId)?.toUiModel()
     if (recipe != null) {
         var currentPortions by rememberSaveable { mutableIntStateOf(recipe.serving) }
@@ -57,7 +62,7 @@ fun RecipeDetailsScreen(recipeId: Int, modifier: Modifier = Modifier) {
         ) {
             ScreenHeader(
                 imagePainter = rememberAsyncImagePainter(
-                    model = ImageRequest.Builder(LocalContext.current)
+                    model = ImageRequest.Builder(context)
                         .data(recipe.imageUrl)
                         .crossfade(true)
                         .build(),
@@ -65,7 +70,9 @@ fun RecipeDetailsScreen(recipeId: Int, modifier: Modifier = Modifier) {
                     error = painterResource(R.drawable.error)
                 ),
                 contentDescription = recipe.title,
-                title = recipe.title
+                title = recipe.title,
+                showShareButton = true,
+                onShareClick = { shareRecipe(context, recipe.id, recipe.title) }
             )
             Text(
                 modifier = Modifier.padding(vertical = Dimens.PaddingMedium),
@@ -77,24 +84,44 @@ fun RecipeDetailsScreen(recipeId: Int, modifier: Modifier = Modifier) {
                 currentPortions = currentPortions,
                 onPortionsChange = { currentPortions = it }
             )
-            scaledIngredients.forEachIndexed { index, model ->
-                IngredientItem(model)
-                if (index != scaledIngredients.lastIndex) HorizontalDivider()
+            Column(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(Dimens.RoundedCorner8))
+                    .background(MaterialTheme.colorScheme.surface)
+            ) {
+                scaledIngredients.forEachIndexed { index, model ->
+                    IngredientItem(model)
+                    if (index != scaledIngredients.lastIndex) HorizontalDivider(
+                        modifier = Modifier.padding(
+                            Dimens.PaddingMedium
+                        )
+                    )
+                }
             }
-
             Text(
                 modifier = Modifier.padding(vertical = Dimens.PaddingMedium),
                 text = stringResource(R.string.cooking_method).uppercase(),
                 color = MaterialTheme.colorScheme.primary,
                 style = recipesAppTypography.displayLarge
             )
-            recipe.method.forEachIndexed { index, method ->
-                Text(
-                    modifier = Modifier.padding(Dimens.PaddingMedium),
-                    text = "${index + 1}. $method"
-                )
-                if (index != recipe.method.lastIndex) HorizontalDivider()
+            Column(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(Dimens.RoundedCorner8))
+                    .background(MaterialTheme.colorScheme.surface)
+            ) {
+                recipe.method.forEachIndexed { index, method ->
+                    Text(
+                        modifier = Modifier.padding(Dimens.PaddingMedium),
+                        text = "${index + 1}. $method"
+                    )
+                    if (index != recipe.method.lastIndex) HorizontalDivider(
+                        modifier = Modifier.padding(
+                            Dimens.PaddingMedium
+                        )
+                    )
+                }
             }
+
         }
     } else {
         Text(

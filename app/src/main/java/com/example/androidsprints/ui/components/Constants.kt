@@ -2,4 +2,7 @@ package com.example.androidsprints.ui.components
 
 object Constants {
     const val ASSETS_URI_PREFIX = "file:///android_asset/"
+    const val DEEP_LINK_SCHEME = "recipeapp"
+    const val DEEP_LINK_BASE_URL = "https://recipes.aisprints.ru"
+    fun createRecipeDeepLink(recipeId: Int) = "$DEEP_LINK_BASE_URL/recipe/$recipeId"
 }
