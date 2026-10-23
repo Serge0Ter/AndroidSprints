@@ -1,22 +1,50 @@
 package com.example.androidsprints.ui.navigation
 
+import android.content.Intent
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.androidsprints.data.repository.getRecipeById
 import com.example.androidsprints.ui.categories.CategoriesScreen
 import com.example.androidsprints.ui.details.RecipeDetailsScreen
 import com.example.androidsprints.ui.favorites.FavoritesScreen
 import com.example.androidsprints.ui.recipes.RecipesScreen
+import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun RecipesNavHost(
+    deepLink: Intent? = null,
+    onDeepLink: () -> Unit = {},
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
+    LaunchedEffect(deepLink) {
+        deepLink?.data?.let { uri ->
+            val recipeId: Int? = when (uri.scheme) {
+                "recipeapp" -> {
+                    if (uri.host == "recipe") uri.pathSegments.getOrNull(0)?.toIntOrNull() else null
+                }
+
+                "https", "http" -> {
+                    if (uri.pathSegments.getOrNull(0) == "recipe") uri.pathSegments.getOrNull(1)
+                        ?.toIntOrNull() else null
+                }
+
+                else -> null
+            }
+            if (recipeId != null) {
+                delay(100.milliseconds)
+                navController.navigate(Destination.RecipeDetails.createRoute(recipeId))
+                onDeepLink()
+            }
+        }
+    }
     NavHost(
         navController = navController,
         startDestination = Destination.Categories.route,
