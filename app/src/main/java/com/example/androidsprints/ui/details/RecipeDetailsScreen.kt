@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -40,6 +41,7 @@ fun RecipeDetailsScreen(recipeId: Int, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val recipe = getRecipeById(recipeId)?.toUiModel()
     if (recipe != null) {
+        var isFavorite by rememberSaveable { mutableStateOf(recipe.isFavorite) }
         var currentPortions by rememberSaveable { mutableIntStateOf(recipe.serving) }
         val scaledIngredients = remember(currentPortions) {
             val multiplier = currentPortions.toDouble() / recipe.serving
@@ -72,7 +74,10 @@ fun RecipeDetailsScreen(recipeId: Int, modifier: Modifier = Modifier) {
                 contentDescription = recipe.title,
                 title = recipe.title,
                 showShareButton = true,
-                onShareClick = { shareRecipe(context, recipe.id, recipe.title) }
+                onShareClick = { shareRecipe(context, recipe.id, recipe.title) },
+                showFavoriteButton = true,
+                isFavorite = isFavorite,
+                onFavoriteToggle = { isFavorite = !isFavorite }
             )
             Text(
                 modifier = Modifier.padding(vertical = Dimens.PaddingMedium),
