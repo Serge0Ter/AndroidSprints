@@ -33,15 +33,23 @@ import com.example.androidsprints.ui.components.ScreenHeader
 import com.example.androidsprints.ui.recipes.model.toUiModel
 import com.example.androidsprints.ui.theme.Dimens
 import com.example.androidsprints.ui.theme.recipesAppTypography
+import com.example.androidsprints.ui.utils.FavoritePrefsManager
 import com.example.androidsprints.ui.utils.shareRecipe
 import kotlin.math.roundToInt
 
 @Composable
 fun RecipeDetailsScreen(recipeId: Int, modifier: Modifier = Modifier) {
     val context = LocalContext.current
+    val favoritePrefsManager = remember { FavoritePrefsManager(context.applicationContext) }
     val recipe = getRecipeById(recipeId)?.toUiModel()
     if (recipe != null) {
-        var isFavorite by rememberSaveable { mutableStateOf(recipe.isFavorite) }
+        var isFavorite by rememberSaveable(recipeId) {
+            mutableStateOf(
+                favoritePrefsManager.isFavorite(
+                    recipeId
+                )
+            )
+        }
         var currentPortions by rememberSaveable { mutableIntStateOf(recipe.serving) }
         val scaledIngredients = remember(currentPortions) {
             val multiplier = currentPortions.toDouble() / recipe.serving
@@ -77,7 +85,11 @@ fun RecipeDetailsScreen(recipeId: Int, modifier: Modifier = Modifier) {
                 onShareClick = { shareRecipe(context, recipe.id, recipe.title) },
                 showFavoriteButton = true,
                 isFavorite = isFavorite,
-                onFavoriteToggle = { isFavorite = !isFavorite }
+                onFavoriteToggle = {
+                    isFavorite = !isFavorite
+                    if (isFavorite) favoritePrefsManager.addToFavorites(recipe.id)
+                    else favoritePrefsManager.removeFromFavorites(recipe.id)
+                }
             )
             Text(
                 modifier = Modifier.padding(vertical = Dimens.PaddingMedium),
