@@ -84,7 +84,8 @@ fun ScreenHeader(
                     content = {
                         Icon(
                             painter = rememberVectorPainter(ImageVector.vectorResource(R.drawable.ic_share)),
-                            contentDescription = stringResource(R.string.share)
+                            contentDescription = stringResource(R.string.share),
+                            tint = Color.Unspecified
                         )
                     }
                 )
