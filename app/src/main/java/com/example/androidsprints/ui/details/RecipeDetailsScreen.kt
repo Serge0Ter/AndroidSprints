@@ -11,10 +11,12 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -33,23 +35,19 @@ import com.example.androidsprints.ui.components.ScreenHeader
 import com.example.androidsprints.ui.recipes.model.toUiModel
 import com.example.androidsprints.ui.theme.Dimens
 import com.example.androidsprints.ui.theme.recipesAppTypography
-import com.example.androidsprints.ui.utils.FavoritePrefsManager
+import com.example.androidsprints.ui.utils.FavoriteDataStoreManager
 import com.example.androidsprints.ui.utils.shareRecipe
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 @Composable
 fun RecipeDetailsScreen(recipeId: Int, modifier: Modifier = Modifier) {
+    val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
-    val favoritePrefsManager = remember { FavoritePrefsManager(context.applicationContext) }
+    val favoritePrefsManager = remember { FavoriteDataStoreManager(context.applicationContext) }
     val recipe = getRecipeById(recipeId)?.toUiModel()
     if (recipe != null) {
-        var isFavorite by rememberSaveable(recipeId) {
-            mutableStateOf(
-                favoritePrefsManager.isFavorite(
-                    recipeId
-                )
-            )
-        }
+        var isFavorite by rememberSaveable(recipeId) { mutableStateOf(false) }
         var currentPortions by rememberSaveable { mutableIntStateOf(recipe.serving) }
         val scaledIngredients = remember(currentPortions) {
             val multiplier = currentPortions.toDouble() / recipe.serving
@@ -63,6 +61,9 @@ fun RecipeDetailsScreen(recipeId: Int, modifier: Modifier = Modifier) {
                     it.copy(quantity = text)
                 } else it
             }
+        }
+        LaunchedEffect(recipe.id) {
+            isFavorite = favoritePrefsManager.isFavorite(recipe.id)
         }
         Column(
             modifier = modifier
@@ -86,9 +87,11 @@ fun RecipeDetailsScreen(recipeId: Int, modifier: Modifier = Modifier) {
                 showFavoriteButton = true,
                 isFavorite = isFavorite,
                 onFavoriteToggle = {
-                    isFavorite = !isFavorite
-                    if (isFavorite) favoritePrefsManager.addToFavorites(recipe.id)
-                    else favoritePrefsManager.removeFromFavorites(recipe.id)
+                    coroutineScope.launch {
+                        if (isFavorite) favoritePrefsManager.removeFavorite(recipe.id)
+                        else favoritePrefsManager.addFavorite(recipe.id)
+                        isFavorite = !isFavorite
+                    }
                 }
             )
             Text(
