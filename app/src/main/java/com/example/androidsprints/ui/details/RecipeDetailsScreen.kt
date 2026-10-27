@@ -11,10 +11,9 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -44,11 +43,13 @@ import kotlin.math.roundToInt
 fun RecipeDetailsScreen(recipeId: Int, modifier: Modifier = Modifier) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
-    val favoritePrefsManager = remember { FavoriteDataStoreManager(context.applicationContext) }
+    val favoriteDataStoreManager = remember { FavoriteDataStoreManager(context.applicationContext) }
     val recipe = getRecipeById(recipeId)?.toUiModel()
     if (recipe != null) {
-        var isFavorite by rememberSaveable(recipeId) { mutableStateOf(false) }
-        var isUpdating by remember { mutableStateOf(false) }
+        val isFavorite by remember(recipeId) {
+            favoriteDataStoreManager
+                .isFavoriteFlow(recipe.id)
+        }.collectAsState(initial = false)
         var currentPortions by rememberSaveable { mutableIntStateOf(recipe.serving) }
         val scaledIngredients = remember(currentPortions) {
             val multiplier = currentPortions.toDouble() / recipe.serving
@@ -62,9 +63,6 @@ fun RecipeDetailsScreen(recipeId: Int, modifier: Modifier = Modifier) {
                     it.copy(quantity = text)
                 } else it
             }
-        }
-        LaunchedEffect(recipe.id) {
-            isFavorite = favoritePrefsManager.isFavorite(recipe.id)
         }
         Column(
             modifier = modifier
@@ -88,18 +86,9 @@ fun RecipeDetailsScreen(recipeId: Int, modifier: Modifier = Modifier) {
                 showFavoriteButton = true,
                 isFavorite = isFavorite,
                 onFavoriteToggle = {
-                    if (!isUpdating) {
-                        isUpdating = true
-                        coroutineScope.launch {
-                            val target = !isFavorite
-                            try {
-                                if (target) favoritePrefsManager.addFavorite(recipe.id)
-                                else favoritePrefsManager.removeFavorite(recipe.id)
-                                isFavorite = target
-                            } finally {
-                                isUpdating = false
-                            }
-                        }
+                    coroutineScope.launch {
+                        if (isFavorite) favoriteDataStoreManager.removeFavorite(recipe.id)
+                        else favoriteDataStoreManager.addFavorite(recipe.id)
                     }
 
                 }
