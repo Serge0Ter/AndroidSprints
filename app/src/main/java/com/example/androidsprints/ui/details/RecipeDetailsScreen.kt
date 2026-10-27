@@ -48,6 +48,7 @@ fun RecipeDetailsScreen(recipeId: Int, modifier: Modifier = Modifier) {
     val recipe = getRecipeById(recipeId)?.toUiModel()
     if (recipe != null) {
         var isFavorite by rememberSaveable(recipeId) { mutableStateOf(false) }
+        var isUpdating by remember { mutableStateOf(false) }
         var currentPortions by rememberSaveable { mutableIntStateOf(recipe.serving) }
         val scaledIngredients = remember(currentPortions) {
             val multiplier = currentPortions.toDouble() / recipe.serving
@@ -87,11 +88,20 @@ fun RecipeDetailsScreen(recipeId: Int, modifier: Modifier = Modifier) {
                 showFavoriteButton = true,
                 isFavorite = isFavorite,
                 onFavoriteToggle = {
-                    coroutineScope.launch {
-                        if (isFavorite) favoritePrefsManager.removeFavorite(recipe.id)
-                        else favoritePrefsManager.addFavorite(recipe.id)
-                        isFavorite = !isFavorite
+                    if (!isUpdating) {
+                        isUpdating = true
+                        coroutineScope.launch {
+                            val target = !isFavorite
+                            try {
+                                if (target) favoritePrefsManager.addFavorite(recipe.id)
+                                else favoritePrefsManager.removeFavorite(recipe.id)
+                                isFavorite = target
+                            } finally {
+                                isUpdating = false
+                            }
+                        }
                     }
+
                 }
             )
             Text(
