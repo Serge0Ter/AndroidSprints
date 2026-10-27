@@ -41,6 +41,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.datastore.preferences)
     implementation(libs.navigation.compose)
     implementation(libs.androidx.compose.material.icons.core)
     implementation(libs.coil.compose)

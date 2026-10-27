@@ -16,5 +16,6 @@ fun FavoritesScreen(modifier: Modifier = Modifier) {
             contentDescription = stringResource(R.string.favorites),
             title = stringResource(R.string.favorites),
         )
+
     }
 }
