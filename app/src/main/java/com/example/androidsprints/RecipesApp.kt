@@ -46,6 +46,7 @@ fun RecipesApp(
             },
             content = { innerPadding ->
                 RecipesNavHost(
+                    favoriteDataStoreManager = favoriteDataStoreManager,
                     deepLink = deepLinkIntent,
                     onDeepLink = onDeepLink,
                     navController = navController,

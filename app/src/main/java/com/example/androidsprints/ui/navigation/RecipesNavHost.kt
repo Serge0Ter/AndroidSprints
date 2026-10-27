@@ -9,16 +9,17 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.androidsprints.data.repository.getRecipeById
 import com.example.androidsprints.ui.categories.CategoriesScreen
 import com.example.androidsprints.ui.details.RecipeDetailsScreen
 import com.example.androidsprints.ui.favorites.FavoritesScreen
 import com.example.androidsprints.ui.recipes.RecipesScreen
+import com.example.androidsprints.ui.utils.FavoriteDataStoreManager
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun RecipesNavHost(
+    favoriteDataStoreManager: FavoriteDataStoreManager,
     deepLink: Intent? = null,
     onDeepLink: () -> Unit = {},
     navController: NavHostController,
@@ -58,7 +59,12 @@ fun RecipesNavHost(
             )
         }
         composable(Destination.Favorites.route) {
-            FavoritesScreen()
+            FavoritesScreen(
+                favoriteDataStoreManager = favoriteDataStoreManager,
+                onRecipeClick = { recipeId ->
+                    navController.navigate(Destination.RecipeDetails.createRoute(recipeId))
+                }
+            )
         }
         composable(
             route = Destination.Recipes.route,
