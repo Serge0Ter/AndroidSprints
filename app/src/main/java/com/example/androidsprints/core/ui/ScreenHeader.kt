@@ -1,4 +1,4 @@
-package com.example.androidsprints.ui.components
+package com.example.androidsprints.core.ui
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween

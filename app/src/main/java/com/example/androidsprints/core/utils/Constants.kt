@@ -1,4 +1,4 @@
-package com.example.androidsprints.ui.components
+package com.example.androidsprints.core.utils
 
 object Constants {
     const val ASSETS_URI_PREFIX = "file:///android_asset/"

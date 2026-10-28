@@ -1,4 +1,4 @@
-package com.example.androidsprints.ui.navigation
+package com.example.androidsprints.app.navigation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

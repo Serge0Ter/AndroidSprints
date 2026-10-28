@@ -1,8 +1,8 @@
-package com.example.androidsprints.ui.categories.model
+package com.example.androidsprints.features.categories.presentation.model
 
 import androidx.compose.runtime.Immutable
 import com.example.androidsprints.data.model.CategoryDto
-import com.example.androidsprints.ui.components.Constants
+import com.example.androidsprints.core.utils.Constants
 
 @Immutable
 data class CategoryUiModel(

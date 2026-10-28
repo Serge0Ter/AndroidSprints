@@ -1,9 +1,9 @@
-package com.example.androidsprints.ui.recipes.model
+package com.example.androidsprints.features.recipes.presentation.model
 
 import android.os.Parcelable
 import androidx.compose.runtime.Immutable
 import com.example.androidsprints.data.model.RecipeDto
-import com.example.androidsprints.ui.components.Constants
+import com.example.androidsprints.core.utils.Constants
 import kotlinx.parcelize.Parcelize
 
 @Immutable

@@ -1,4 +1,4 @@
-package com.example.androidsprints.ui.navigation
+package com.example.androidsprints.app.navigation
 
 import android.content.Intent
 import androidx.compose.runtime.Composable
@@ -10,10 +10,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.androidsprints.data.repository.RecipesRepository
-import com.example.androidsprints.ui.categories.CategoriesScreen
-import com.example.androidsprints.ui.details.RecipeDetailsScreen
-import com.example.androidsprints.ui.favorites.FavoritesScreen
-import com.example.androidsprints.ui.recipes.RecipesScreen
+import com.example.androidsprints.features.categories.ui.CategoriesScreen
+import com.example.androidsprints.features.details.ui.RecipeDetailsScreen
+import com.example.androidsprints.features.favorites.ui.FavoritesScreen
+import com.example.androidsprints.features.recipes.ui.RecipesScreen
 import com.example.androidsprints.ui.utils.FavoriteDataStoreManager
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds

@@ -1,4 +1,4 @@
-package com.example.androidsprints.ui.recipes
+package com.example.androidsprints.features.recipes.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,7 +19,7 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.example.androidsprints.R
-import com.example.androidsprints.ui.recipes.model.RecipeUiModel
+import com.example.androidsprints.features.recipes.presentation.model.RecipeUiModel
 import com.example.androidsprints.ui.theme.Dimens
 import com.example.androidsprints.ui.theme.recipesAppTypography
 

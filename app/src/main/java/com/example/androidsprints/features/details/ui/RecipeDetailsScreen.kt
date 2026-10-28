@@ -1,4 +1,4 @@
-package com.example.androidsprints.ui.details
+package com.example.androidsprints.features.details.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -28,10 +28,10 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.example.androidsprints.R
 import com.example.androidsprints.data.repository.RecipesRepository
+import com.example.androidsprints.features.recipes.presentation.model.toUiModel
 import com.example.androidsprints.ui.components.IngredientItem
 import com.example.androidsprints.ui.components.PortionsSelector
-import com.example.androidsprints.ui.components.ScreenHeader
-import com.example.androidsprints.ui.recipes.model.toUiModel
+import com.example.androidsprints.core.ui.ScreenHeader
 import com.example.androidsprints.ui.theme.Dimens
 import com.example.androidsprints.ui.theme.recipesAppTypography
 import com.example.androidsprints.ui.utils.FavoriteDataStoreManager
