@@ -12,17 +12,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.example.androidsprints.R
-import com.example.androidsprints.data.repository.getCategories
+import com.example.androidsprints.data.repository.RecipesRepository
 import com.example.androidsprints.ui.categories.model.toUiModel
 import com.example.androidsprints.ui.components.ScreenHeader
 import com.example.androidsprints.ui.theme.Dimens
 
 @Composable
 fun CategoriesScreen(
+    repository: RecipesRepository,
     modifier: Modifier = Modifier,
     onCategoryClick: (Int) -> Unit,
 ) {
-    val categories = remember { getCategories().map { it.toUiModel() } }
+    val categories = remember { repository.getCategories().map { it.toUiModel() } }
     Column(modifier = modifier) {
         ScreenHeader(
             imagePainter = painterResource(id = R.drawable.categories),

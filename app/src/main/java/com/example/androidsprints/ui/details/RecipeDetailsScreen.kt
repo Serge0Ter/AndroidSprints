@@ -27,7 +27,7 @@ import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.example.androidsprints.R
-import com.example.androidsprints.data.repository.getRecipeById
+import com.example.androidsprints.data.repository.RecipesRepository
 import com.example.androidsprints.ui.components.IngredientItem
 import com.example.androidsprints.ui.components.PortionsSelector
 import com.example.androidsprints.ui.components.ScreenHeader
@@ -40,11 +40,15 @@ import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 @Composable
-fun RecipeDetailsScreen(recipeId: Int, modifier: Modifier = Modifier) {
+fun RecipeDetailsScreen(
+    recipeId: Int,
+    repository: RecipesRepository,
+    modifier: Modifier = Modifier
+) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     val favoriteDataStoreManager = remember { FavoriteDataStoreManager(context.applicationContext) }
-    val recipe = getRecipeById(recipeId)?.toUiModel()
+    val recipe = repository.getRecipeById(recipeId)?.toUiModel()
     if (recipe != null) {
         val isFavorite by remember(recipeId) {
             favoriteDataStoreManager
