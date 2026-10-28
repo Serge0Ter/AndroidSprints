@@ -155,12 +155,15 @@ private val burgerRecipes = listOf(
     )
 )
 
-fun getCategories(): List<CategoryDto> = categories
+class RecipesRepository {
+    fun getCategories(): List<CategoryDto> = categories
 
-fun getRecipesByCategoryId(categoryId: Int): List<RecipeDto> {
-    return when (categoryId) {
-        0 -> burgerRecipes
-        else -> emptyList()
+    fun getRecipesByCategoryId(categoryId: Int): List<RecipeDto> {
+        return when (categoryId) {
+            0 -> burgerRecipes
+            else -> emptyList()
+        }
     }
+
+    fun getRecipeById(recipeId: Int): RecipeDto? = burgerRecipes.firstOrNull { it.id == recipeId }
 }
-fun getRecipeById(recipeId: Int): RecipeDto? = burgerRecipes.firstOrNull { it.id == recipeId }

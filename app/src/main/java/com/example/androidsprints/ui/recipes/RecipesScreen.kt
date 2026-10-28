@@ -16,8 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.example.androidsprints.R
 import com.example.androidsprints.ScreenId
-import com.example.androidsprints.data.repository.getCategories
-import com.example.androidsprints.data.repository.getRecipesByCategoryId
+import com.example.androidsprints.data.repository.RecipesRepository
 import com.example.androidsprints.ui.components.ScreenHeader
 import com.example.androidsprints.ui.recipes.model.RecipeUiModel
 import com.example.androidsprints.ui.recipes.model.toUiModel
@@ -27,13 +26,14 @@ import com.example.androidsprints.ui.theme.Dimens
 fun RecipesScreen(
     categoryId: Int,
     onRecipeClick: (Int, RecipeUiModel) -> Unit,
+    repository: RecipesRepository,
     modifier: Modifier = Modifier
 ) {
     var recipes by remember { mutableStateOf<List<RecipeUiModel>>(emptyList()) }
     val title =
-        remember(categoryId) { getCategories().firstOrNull { categoryId == it.id }?.title.orEmpty() }
+        remember(categoryId) { repository.getCategories().firstOrNull { categoryId == it.id }?.title.orEmpty() }
     LaunchedEffect(categoryId) {
-        recipes = getRecipesByCategoryId(categoryId).map { it.toUiModel() }
+        recipes = repository.getRecipesByCategoryId(categoryId).map { it.toUiModel() }
     }
 
     Column(modifier = modifier) {

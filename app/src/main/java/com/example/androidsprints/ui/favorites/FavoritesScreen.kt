@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.example.androidsprints.R
-import com.example.androidsprints.data.repository.getRecipeById
+import com.example.androidsprints.data.repository.RecipesRepository
 import com.example.androidsprints.ui.components.ScreenHeader
 import com.example.androidsprints.ui.recipes.RecipeItem
 import com.example.androidsprints.ui.recipes.model.toUiModel
@@ -25,13 +25,14 @@ import kotlinx.coroutines.flow.map
 @Composable
 fun FavoritesScreen(
     favoriteDataStoreManager: FavoriteDataStoreManager,
+    repository: RecipesRepository,
     onRecipeClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val favorites = remember(favoriteDataStoreManager) {
+    val favorites = remember(repository, favoriteDataStoreManager) {
         favoriteDataStoreManager.getFavoriteIdsFlow().map { ids ->
             ids.mapNotNull { rawId ->
-                rawId.toIntOrNull()?.let(::getRecipeById)?.toUiModel()
+                rawId.toIntOrNull()?.let { repository.getRecipeById(it)?.toUiModel() }
             }
         }
     }.collectAsState(emptyList())

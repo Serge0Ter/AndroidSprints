@@ -9,6 +9,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.androidsprints.data.repository.RecipesRepository
 import com.example.androidsprints.ui.categories.CategoriesScreen
 import com.example.androidsprints.ui.details.RecipeDetailsScreen
 import com.example.androidsprints.ui.favorites.FavoritesScreen
@@ -19,6 +20,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun RecipesNavHost(
+    repository: RecipesRepository,
     favoriteDataStoreManager: FavoriteDataStoreManager,
     deepLink: Intent? = null,
     onDeepLink: () -> Unit = {},
@@ -53,6 +55,7 @@ fun RecipesNavHost(
     ) {
         composable(Destination.Categories.route) {
             CategoriesScreen(
+                repository = repository,
                 onCategoryClick = { categoryId ->
                     navController.navigate(Destination.Recipes.createRoute(categoryId))
                 }
@@ -60,6 +63,7 @@ fun RecipesNavHost(
         }
         composable(Destination.Favorites.route) {
             FavoritesScreen(
+                repository = repository,
                 favoriteDataStoreManager = favoriteDataStoreManager,
                 onRecipeClick = { recipeId ->
                     navController.navigate(Destination.RecipeDetails.createRoute(recipeId))
@@ -72,6 +76,7 @@ fun RecipesNavHost(
         ) {
             val categoryId = it.arguments?.getInt("categoryId") ?: 0
             RecipesScreen(
+                repository = repository,
                 categoryId = categoryId,
                 onRecipeClick = { recipeId, recipe ->
                     navController.currentBackStackEntry?.savedStateHandle?.set(
@@ -87,7 +92,7 @@ fun RecipesNavHost(
             arguments = listOf(navArgument("recipeId") { type = NavType.IntType })
         ) {
             val recipeId = it.arguments?.getInt("recipeId") ?: 0
-            RecipeDetailsScreen(recipeId = recipeId)
+            RecipeDetailsScreen(recipeId = recipeId, repository = repository)
         }
     }
 }

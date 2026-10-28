@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
+import com.example.androidsprints.data.repository.RecipesRepository
 import com.example.androidsprints.ui.navigation.BottomNavigation
 import com.example.androidsprints.ui.navigation.Destination
 import com.example.androidsprints.ui.navigation.RecipesNavHost
@@ -33,8 +34,8 @@ fun RecipesApp(
         val favoriteCount by remember {
             favoriteDataStoreManager
                 .getFavoriteCountFlow()
-        }
-            .collectAsState(initial = 0)
+        }.collectAsState(initial = 0)
+        val repository = remember { RecipesRepository() }
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             bottomBar = {
@@ -46,6 +47,7 @@ fun RecipesApp(
             },
             content = { innerPadding ->
                 RecipesNavHost(
+                    repository = repository,
                     favoriteDataStoreManager = favoriteDataStoreManager,
                     deepLink = deepLinkIntent,
                     onDeepLink = onDeepLink,
