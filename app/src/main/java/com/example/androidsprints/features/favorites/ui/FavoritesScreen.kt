@@ -1,4 +1,4 @@
-package com.example.androidsprints.ui.favorites
+package com.example.androidsprints.features.favorites.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,9 +15,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.example.androidsprints.R
 import com.example.androidsprints.data.repository.RecipesRepository
-import com.example.androidsprints.ui.components.ScreenHeader
-import com.example.androidsprints.ui.recipes.RecipeItem
-import com.example.androidsprints.ui.recipes.model.toUiModel
+import com.example.androidsprints.features.recipes.presentation.model.toUiModel
+import com.example.androidsprints.features.recipes.ui.RecipeItem
+import com.example.androidsprints.core.ui.ScreenHeader
 import com.example.androidsprints.ui.theme.Dimens
 import com.example.androidsprints.ui.utils.FavoriteDataStoreManager
 import kotlinx.coroutines.flow.map

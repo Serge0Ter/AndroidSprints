@@ -2,7 +2,7 @@ package com.example.androidsprints.ui.utils
 
 import android.content.Context
 import android.content.Intent
-import com.example.androidsprints.ui.components.Constants
+import com.example.androidsprints.core.utils.Constants
 
 fun shareRecipe(context: Context, recipeId: Int, recipeTitle: String) {
     val shareLink = Constants.createRecipeDeepLink(recipeId)

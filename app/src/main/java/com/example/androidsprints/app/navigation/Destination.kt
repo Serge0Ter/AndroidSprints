@@ -1,4 +1,4 @@
-package com.example.androidsprints.ui.navigation
+package com.example.androidsprints.app.navigation
 
 
 sealed class Destination(val route: String) {

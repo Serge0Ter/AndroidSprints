@@ -1,4 +1,4 @@
-package com.example.androidsprints.ui.recipes
+package com.example.androidsprints.features.recipes.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,12 +14,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import com.example.androidsprints.R
-import com.example.androidsprints.ScreenId
 import com.example.androidsprints.data.repository.RecipesRepository
-import com.example.androidsprints.ui.components.ScreenHeader
-import com.example.androidsprints.ui.recipes.model.RecipeUiModel
-import com.example.androidsprints.ui.recipes.model.toUiModel
+import com.example.androidsprints.features.recipes.presentation.model.RecipeUiModel
+import com.example.androidsprints.features.recipes.presentation.model.toUiModel
+import com.example.androidsprints.core.ui.ScreenHeader
 import com.example.androidsprints.ui.theme.Dimens
 
 @Composable
@@ -31,7 +31,9 @@ fun RecipesScreen(
 ) {
     var recipes by remember { mutableStateOf<List<RecipeUiModel>>(emptyList()) }
     val title =
-        remember(categoryId) { repository.getCategories().firstOrNull { categoryId == it.id }?.title.orEmpty() }
+        remember(categoryId) {
+            repository.getCategories().firstOrNull { categoryId == it.id }?.title.orEmpty()
+        }
     LaunchedEffect(categoryId) {
         recipes = repository.getRecipesByCategoryId(categoryId).map { it.toUiModel() }
     }
@@ -39,7 +41,7 @@ fun RecipesScreen(
     Column(modifier = modifier) {
         ScreenHeader(
             imagePainter = painterResource(id = R.drawable.categories),
-            contentDescription = ScreenId.RECIPES.title,
+            contentDescription = stringResource(R.string.recipes),
             title = title
         )
         LazyColumn(

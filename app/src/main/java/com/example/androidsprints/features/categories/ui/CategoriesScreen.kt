@@ -1,4 +1,4 @@
-package com.example.androidsprints.ui.categories
+package com.example.androidsprints.features.categories.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,8 +13,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.example.androidsprints.R
 import com.example.androidsprints.data.repository.RecipesRepository
-import com.example.androidsprints.ui.categories.model.toUiModel
-import com.example.androidsprints.ui.components.ScreenHeader
+import com.example.androidsprints.features.categories.presentation.model.toUiModel
+import com.example.androidsprints.core.ui.ScreenHeader
 import com.example.androidsprints.ui.theme.Dimens
 
 @Composable

@@ -1,4 +1,4 @@
-package com.example.androidsprints.ui.recipes.model
+package com.example.androidsprints.features.recipes.presentation.model
 
 import android.os.Parcelable
 import androidx.compose.runtime.Immutable

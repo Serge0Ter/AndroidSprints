@@ -1,4 +1,4 @@
-package com.example.androidsprints.ui.navigation
+package com.example.androidsprints.app.navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
