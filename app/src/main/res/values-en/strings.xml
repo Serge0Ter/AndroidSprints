@@ -11,4 +11,7 @@
     <string name="ingredients">Ingredients</string>
     <string name="cooking_method">Сooking method</string>
     <string name="share">Share</string>
+    <string name="errorMessage">Failed to load categories</string>
+    <string name="retry">Retry</string>
+    <string name="categories_empty">Categories is empty</string>
 </resources>

@@ -3,13 +3,19 @@ package com.example.androidsprints.app.navigation
 import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.androidsprints.data.repository.RecipesRepository
+import com.example.androidsprints.features.categories.presentation.CategoriesViewModel
 import com.example.androidsprints.features.categories.ui.CategoriesScreen
 import com.example.androidsprints.features.details.ui.RecipeDetailsScreen
 import com.example.androidsprints.features.favorites.ui.FavoritesScreen
@@ -27,6 +33,10 @@ fun RecipesNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
+    val viewModel: CategoriesViewModel = viewModel(
+        factory = viewModelFactory { initializer { CategoriesViewModel(repository) } }
+    )
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(deepLink) {
         deepLink?.data?.let { uri ->
             val recipeId: Int? = when (uri.scheme) {
@@ -55,10 +65,11 @@ fun RecipesNavHost(
     ) {
         composable(Destination.Categories.route) {
             CategoriesScreen(
-                repository = repository,
+                uiState = uiState,
+                onRetry = viewModel::loadCategories,
                 onCategoryClick = { categoryId ->
                     navController.navigate(Destination.Recipes.createRoute(categoryId))
-                }
+                },
             )
         }
         composable(Destination.Favorites.route) {
