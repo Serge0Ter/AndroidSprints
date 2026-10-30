@@ -16,10 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.example.androidsprints.R
+import com.example.androidsprints.core.ui.ScreenHeader
 import com.example.androidsprints.data.repository.RecipesRepository
 import com.example.androidsprints.features.recipes.presentation.model.RecipeUiModel
 import com.example.androidsprints.features.recipes.presentation.model.toUiModel
-import com.example.androidsprints.core.ui.ScreenHeader
 import com.example.androidsprints.ui.theme.Dimens
 
 @Composable

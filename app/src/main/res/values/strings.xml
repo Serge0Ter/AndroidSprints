@@ -6,6 +6,9 @@
     <string name="ingredients">Ингредиенты</string>
     <string name="cooking_method">Способ приготовления</string>
     <string name="share">Поделиться</string>
+    <string name="errorMessage">Не удалось загрузить категории</string>
+    <string name="retry">Повторить</string>
+    <string name="categories_empty">Пока нет категорий</string>
     <plurals name="portions_count">
         <item quantity="one">%d порция</item>
         <item quantity="few">%d порции</item>

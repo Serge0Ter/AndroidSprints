@@ -56,9 +56,9 @@ fun RecipesNavHost(
         composable(Destination.Categories.route) {
             CategoriesScreen(
                 repository = repository,
-                onCategoryClick = { categoryId ->
+                onCategoryClick = { categoryId, _, _ ->
                     navController.navigate(Destination.Recipes.createRoute(categoryId))
-                }
+                },
             )
         }
         composable(Destination.Favorites.route) {
