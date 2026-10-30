@@ -10,37 +10,51 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.androidsprints.R
 import com.example.androidsprints.core.ui.EmptyMessage
 import com.example.androidsprints.core.ui.ErrorMessage
 import com.example.androidsprints.core.ui.ScreenHeader
-import com.example.androidsprints.features.categories.presentation.CategoriesUiState
+import com.example.androidsprints.data.repository.RecipesRepository
+import com.example.androidsprints.features.categories.presentation.CategoriesViewModel
 import com.example.androidsprints.ui.theme.Dimens
 
 @Composable
 fun CategoriesScreen(
-    uiState: CategoriesUiState,
+    repository: RecipesRepository,
     modifier: Modifier = Modifier,
-    onCategoryClick: (Int) -> Unit,
-    onRetry: () -> Unit
+    onCategoryClick: (Int, String, String) -> Unit,
 ) {
+    val viewModel: CategoriesViewModel = viewModel(
+        factory = viewModelFactory { initializer { CategoriesViewModel(repository) } }
+    )
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val errorMessage = uiState.errorMessage
     Column(modifier = modifier) {
         ScreenHeader(
             imagePainter = painterResource(id = R.drawable.categories),
             contentDescription = stringResource(R.string.categories),
             title = stringResource(R.string.categories),
         )
-        Box(modifier = Modifier.weight(1f).fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxSize()
+        ) {
             when {
                 uiState.isLoading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
 
-                uiState.errorMessage != null -> ErrorMessage(
-                    message = uiState.errorMessage,
-                    onRetry = onRetry,
+                errorMessage != null -> ErrorMessage(
+                    message = errorMessage,
+                    onRetry = viewModel::loadCategories,
                     modifier = Modifier.align(Alignment.Center)
                 )
 
@@ -60,7 +74,13 @@ fun CategoriesScreen(
                     items(uiState.categories, key = { category -> category.id }) { category ->
                         CategoryItem(
                             category = category,
-                            onClick = { onCategoryClick(category.id) })
+                            onClick = {
+                                onCategoryClick(
+                                    category.id,
+                                    category.title,
+                                    category.imageUrl
+                                )
+                            })
                     }
                 }
             }
