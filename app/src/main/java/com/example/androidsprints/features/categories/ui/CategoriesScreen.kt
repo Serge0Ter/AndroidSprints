@@ -37,7 +37,6 @@ fun CategoriesScreen(
         factory = viewModelFactory { initializer { CategoriesViewModel(repository) } }
     )
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val errorMessage = uiState.errorMessage
     Column(modifier = modifier) {
         ScreenHeader(
             imagePainter = painterResource(id = R.drawable.categories),
@@ -52,8 +51,8 @@ fun CategoriesScreen(
             when {
                 uiState.isLoading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
 
-                errorMessage != null -> ErrorMessage(
-                    message = errorMessage,
+                uiState.isError -> ErrorMessage(
+                    message = stringResource(R.string.errorMessage),
                     onRetry = viewModel::loadCategories,
                     modifier = Modifier.align(Alignment.Center)
                 )

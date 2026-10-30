@@ -1,5 +1,6 @@
 package com.example.androidsprints.features.categories.presentation
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.androidsprints.data.repository.RecipesRepository
@@ -20,7 +21,7 @@ class CategoriesViewModel(private val repository: RecipesRepository) : ViewModel
 
     fun loadCategories() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+            _uiState.update { it.copy(isLoading = true, isError = false) }
 
             try {
                 val categories = repository.getCategories().map { dto -> dto.toUiModel() }
@@ -28,10 +29,11 @@ class CategoriesViewModel(private val repository: RecipesRepository) : ViewModel
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
+                Log.e("CategoriesViewModel", "loadCategories failed", e)
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage = "Не удалось загрузить категории"
+                        isError = true
                     )
                 }
             }

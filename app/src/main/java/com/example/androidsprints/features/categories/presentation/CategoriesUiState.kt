@@ -5,5 +5,5 @@ import com.example.androidsprints.features.categories.presentation.model.Categor
 data class CategoriesUiState(
     val categories: List<CategoryUiModel> = emptyList(),
     val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    val isError: Boolean = false
 )
