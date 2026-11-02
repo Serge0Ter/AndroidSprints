@@ -52,7 +52,7 @@ fun CategoriesScreen(
                 uiState.isLoading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
 
                 uiState.isError -> ErrorMessage(
-                    message = stringResource(R.string.errorMessage),
+                    message = stringResource(R.string.errorMessageCategory),
                     onRetry = viewModel::loadCategories,
                     modifier = Modifier.align(Alignment.Center)
                 )
