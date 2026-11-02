@@ -56,8 +56,14 @@ fun RecipesNavHost(
         composable(Destination.Categories.route) {
             CategoriesScreen(
                 repository = repository,
-                onCategoryClick = { categoryId, _, _ ->
-                    navController.navigate(Destination.Recipes.createRoute(categoryId))
+                onCategoryClick = { categoryId, categoryTitle, categoryImage ->
+                    navController.navigate(
+                        Destination.Recipes.createRoute(
+                            categoryId,
+                            categoryTitle,
+                            categoryImage
+                        )
+                    )
                 },
             )
         }
@@ -72,12 +78,13 @@ fun RecipesNavHost(
         }
         composable(
             route = Destination.Recipes.route,
-            arguments = listOf(navArgument("categoryId") { type = NavType.IntType })
+            arguments = listOf(
+                navArgument("categoryId") { type = NavType.IntType },
+                navArgument("categoryTitle") { type = NavType.StringType },
+                navArgument("categoryImageUrl") { type = NavType.StringType },
+            )
         ) {
-            val categoryId = it.arguments?.getInt("categoryId") ?: 0
             RecipesScreen(
-                repository = repository,
-                categoryId = categoryId,
                 onRecipeClick = { recipeId, recipe ->
                     navController.currentBackStackEntry?.savedStateHandle?.set(
                         Destination.RecipeDetails.KEY_RECIPE_OBJECT,

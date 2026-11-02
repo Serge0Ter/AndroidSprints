@@ -1,10 +1,17 @@
 package com.example.androidsprints.app.navigation
 
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
+
 
 sealed class Destination(val route: String) {
     object Categories : Destination("categories")
-    object Recipes : Destination("recipes/{categoryId}") {
-        fun createRoute(categoryId: Int) = "recipes/$categoryId"
+    object Recipes : Destination("recipes/{categoryId}/{categoryTitle}/{categoryImageUrl}") {
+        fun createRoute(categoryId: Int, categoryTitle: String, categoryImage: String): String {
+            val encoderTitle = URLEncoder.encode(categoryTitle, StandardCharsets.UTF_8.toString())
+            val encoderImage = URLEncoder.encode(categoryImage, StandardCharsets.UTF_8.toString())
+            return "recipes/$categoryId/$encoderTitle/$encoderImage"
+        }
     }
 
     object RecipeDetails : Destination("recipe/{recipeId}") {
