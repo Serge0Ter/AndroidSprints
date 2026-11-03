@@ -12,11 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
-import com.example.androidsprints.data.repository.RecipesRepository
 import com.example.androidsprints.app.navigation.BottomNavigation
 import com.example.androidsprints.app.navigation.Destination
 import com.example.androidsprints.app.navigation.RecipesNavHost
 import com.example.androidsprints.app.navigation.navigateToTab
+import com.example.androidsprints.data.repository.RecipesRepository
 import com.example.androidsprints.ui.theme.RecipesAppTheme
 import com.example.androidsprints.ui.utils.FavoriteDataStoreManager
 
@@ -48,7 +48,6 @@ fun RecipesApp(
             content = { innerPadding ->
                 RecipesNavHost(
                     repository = repository,
-                    favoriteDataStoreManager = favoriteDataStoreManager,
                     deepLink = deepLinkIntent,
                     onDeepLink = onDeepLink,
                     navController = navController,

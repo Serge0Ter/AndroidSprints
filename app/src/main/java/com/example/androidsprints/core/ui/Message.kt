@@ -21,6 +21,7 @@ fun EmptyMessage(
     Text(
         text = text,
         modifier = modifier,
+        textAlign = TextAlign.Center,
         style = MaterialTheme.typography.bodyLarge,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )

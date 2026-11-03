@@ -1,9 +1,10 @@
-package com.example.androidsprints.features.recipes
+package com.example.androidsprints.features.recipes.presentation
 
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.androidsprints.core.utils.NavArgs
 import com.example.androidsprints.data.repository.RecipesRepository
 import com.example.androidsprints.features.recipes.presentation.model.RecipesUiState
 import com.example.androidsprints.features.recipes.presentation.model.toUiModel
@@ -16,15 +17,13 @@ import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 
 class RecipesViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
-
-    private val categoryId: Int = checkNotNull(savedStateHandle["categoryId"])
+    private val categoryId: Int = checkNotNull(savedStateHandle[NavArgs.CATEGORY_ID])
     private val categoryTitle: String = URLDecoder.decode(
-        savedStateHandle["categoryTitle"] ?: "",
+        savedStateHandle[NavArgs.CATEGORY_TITLE] ?: "",
         StandardCharsets.UTF_8.toString()
     )
-
     private val categoryImage: String = URLDecoder.decode(
-        savedStateHandle["categoryImageUrl"] ?: "",
+        savedStateHandle[NavArgs.CATEGORY_IMAGE_URL] ?: "",
         StandardCharsets.UTF_8.toString()
     )
     private val _uiState = MutableStateFlow(
