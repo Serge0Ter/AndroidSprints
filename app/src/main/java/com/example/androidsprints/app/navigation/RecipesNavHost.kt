@@ -82,11 +82,7 @@ fun RecipesNavHost(
             )
         ) {
             RecipesScreen(
-                onRecipeClick = { recipeId, recipe ->
-                    navController.currentBackStackEntry?.savedStateHandle?.set(
-                        Destination.RecipeDetails.KEY_RECIPE_OBJECT,
-                        recipe
-                    )
+                onRecipeClick = { recipeId ->
                     navController.navigate(Destination.RecipeDetails.createRoute(recipeId))
                 }
             )
@@ -95,8 +91,7 @@ fun RecipesNavHost(
             route = Destination.RecipeDetails.route,
             arguments = listOf(navArgument(NavArgs.RECIPE_ID) { type = NavType.IntType })
         ) {
-            val recipeId = it.arguments?.getInt(NavArgs.RECIPE_ID) ?: 0
-            RecipeDetailsScreen(recipeId = recipeId)
+            RecipeDetailsScreen()
         }
     }
 }

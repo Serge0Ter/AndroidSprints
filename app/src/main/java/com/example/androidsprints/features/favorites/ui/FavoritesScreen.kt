@@ -20,8 +20,8 @@ import com.example.androidsprints.R
 import com.example.androidsprints.core.ui.EmptyMessage
 import com.example.androidsprints.core.ui.ErrorMessage
 import com.example.androidsprints.core.ui.ScreenHeader
+import com.example.androidsprints.features.favorites.presentation.FavoritesViewModel
 import com.example.androidsprints.features.favorites.presentation.model.FavoritesUiState
-import com.example.androidsprints.features.favorites.presentation.model.FavoritesViewModel
 import com.example.androidsprints.features.recipes.ui.RecipeItem
 import com.example.androidsprints.ui.theme.Dimens
 
@@ -68,7 +68,7 @@ fun FavoritesScreen(
 
                 FavoritesUiState.Error -> ErrorMessage(
                     message = stringResource(R.string.errorMessageRecipe),
-                    onRetry = { },
+                    onRetry = viewModel::retry,
                     modifier = Modifier.align(Alignment.Center)
                 )
 

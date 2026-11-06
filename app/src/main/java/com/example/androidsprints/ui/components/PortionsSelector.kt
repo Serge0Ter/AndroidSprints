@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import com.example.androidsprints.R
+import com.example.androidsprints.ui.theme.Dimens
 import kotlin.math.roundToInt
 
 @Composable
@@ -29,7 +30,7 @@ fun PortionsSelector(
         Slider(
             value = currentPortions.toFloat(),
             onValueChange = { onPortionsChange(it.roundToInt()) },
-            valueRange = 1f..12f,
+            valueRange = Dimens.minCountSlider.toFloat()..Dimens.maxCountSlider.toFloat(),
             steps = 10
         )
     }
