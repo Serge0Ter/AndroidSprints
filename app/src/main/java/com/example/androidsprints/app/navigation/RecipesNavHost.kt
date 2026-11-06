@@ -9,19 +9,18 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.androidsprints.core.utils.NavArgs
 import com.example.androidsprints.data.repository.RecipesRepository
 import com.example.androidsprints.features.categories.ui.CategoriesScreen
 import com.example.androidsprints.features.details.ui.RecipeDetailsScreen
 import com.example.androidsprints.features.favorites.ui.FavoritesScreen
 import com.example.androidsprints.features.recipes.ui.RecipesScreen
-import com.example.androidsprints.ui.utils.FavoriteDataStoreManager
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun RecipesNavHost(
     repository: RecipesRepository,
-    favoriteDataStoreManager: FavoriteDataStoreManager,
     deepLink: Intent? = null,
     onDeepLink: () -> Unit = {},
     navController: NavHostController,
@@ -69,8 +68,6 @@ fun RecipesNavHost(
         }
         composable(Destination.Favorites.route) {
             FavoritesScreen(
-                repository = repository,
-                favoriteDataStoreManager = favoriteDataStoreManager,
                 onRecipeClick = { recipeId ->
                     navController.navigate(Destination.RecipeDetails.createRoute(recipeId))
                 }
@@ -79,9 +76,9 @@ fun RecipesNavHost(
         composable(
             route = Destination.Recipes.route,
             arguments = listOf(
-                navArgument("categoryId") { type = NavType.IntType },
-                navArgument("categoryTitle") { type = NavType.StringType },
-                navArgument("categoryImageUrl") { type = NavType.StringType },
+                navArgument(NavArgs.CATEGORY_ID) { type = NavType.IntType },
+                navArgument(NavArgs.CATEGORY_TITLE) { type = NavType.StringType },
+                navArgument(NavArgs.CATEGORY_IMAGE_URL) { type = NavType.StringType },
             )
         ) {
             RecipesScreen(
@@ -96,10 +93,10 @@ fun RecipesNavHost(
         }
         composable(
             route = Destination.RecipeDetails.route,
-            arguments = listOf(navArgument("recipeId") { type = NavType.IntType })
+            arguments = listOf(navArgument(NavArgs.RECIPE_ID) { type = NavType.IntType })
         ) {
-            val recipeId = it.arguments?.getInt("recipeId") ?: 0
-            RecipeDetailsScreen(recipeId = recipeId, repository = repository)
+            val recipeId = it.arguments?.getInt(NavArgs.RECIPE_ID) ?: 0
+            RecipeDetailsScreen(recipeId = recipeId)
         }
     }
 }
