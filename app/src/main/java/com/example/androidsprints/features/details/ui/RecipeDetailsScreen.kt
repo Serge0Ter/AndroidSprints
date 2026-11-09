@@ -38,13 +38,10 @@ import com.example.androidsprints.ui.utils.shareRecipe
 
 @Composable
 fun RecipeDetailsScreen(
-    recipeId: Int,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val viewModel: RecipeDetailsViewModel = viewModel(
-        factory = RecipeDetailsViewModel.provideFactory(recipeId)
-    )
+    val viewModel: RecipeDetailsViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     Box(
         modifier = Modifier

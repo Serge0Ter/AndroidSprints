@@ -24,12 +24,11 @@ import com.example.androidsprints.core.ui.EmptyMessage
 import com.example.androidsprints.core.ui.ErrorMessage
 import com.example.androidsprints.core.ui.ScreenHeader
 import com.example.androidsprints.features.recipes.presentation.RecipesViewModel
-import com.example.androidsprints.features.recipes.presentation.model.RecipeUiModel
 import com.example.androidsprints.ui.theme.Dimens
 
 @Composable
 fun RecipesScreen(
-    onRecipeClick: (Int, RecipeUiModel) -> Unit,
+    onRecipeClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val viewModel: RecipesViewModel = viewModel()
@@ -72,7 +71,7 @@ fun RecipesScreen(
                         items(uiState.recipes, key = { it.id }) { recipe ->
                             RecipeItem(
                                 recipe = recipe,
-                                onClick = { onRecipeClick(recipe.id, recipe) }
+                                onClick = onRecipeClick
                             )
                         }
                     }

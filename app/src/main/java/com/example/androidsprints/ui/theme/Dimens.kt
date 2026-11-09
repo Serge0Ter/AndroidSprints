@@ -13,5 +13,7 @@ object Dimens {
     val RoundedCorner6 = 6.dp
     val RoundedCorner8 = 8.dp
     val HeaderHeight = 224.dp
+    val minCountSlider = 1
+    val maxCountSlider = 12
 
 }
