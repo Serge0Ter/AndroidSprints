@@ -20,11 +20,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val thread = Thread({
-            var connection: HttpURLConnection? = null
+            val connection: HttpURLConnection =
+                URL("https://recipes.aisprints.ru/api/category").openConnection() as HttpURLConnection
             try {
                 Log.i("!!!", "Выполняю запрос на потоке: ${Thread.currentThread().name}")
-                val url = URL("https://recipes.aisprints.ru/api/category")
-                connection = url.openConnection() as HttpURLConnection
                 val json = connection.getInputStream().bufferedReader().use { it.readText() }
                 Log.i("!!!", "Запрос: ${connection.responseCode}")
                 Log.i("!!!", "Запрос: ${connection.responseMessage}")
@@ -34,7 +33,7 @@ class MainActivity : ComponentActivity() {
             } catch (e: Exception) {
                 Log.e("!!!", "Ошибка запроса", e)
             } finally {
-                connection?.disconnect()
+                connection.disconnect()
             }
         }, "NetworkThread")
         Log.i("!!!", "Метод onCreate() выполняется на потоке: ${Thread.currentThread().name}")
