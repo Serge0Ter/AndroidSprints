@@ -22,8 +22,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class RecipeDetailsViewModel(
-    savedStateHandle: SavedStateHandle,
     application: Application,
+    savedStateHandle: SavedStateHandle,
 ) : AndroidViewModel(application) {
     companion object {
         fun provideFactory(): ViewModelProvider.Factory = viewModelFactory {
