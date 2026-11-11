@@ -11,19 +11,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.example.androidsprints.data.model.CategoryDto
 import com.example.androidsprints.data.model.RecipeDto
+import com.example.androidsprints.data.network.ApiClient
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
+import okhttp3.Request
 import java.io.IOException
-import java.net.HttpURLConnection
-import java.net.URL
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.RejectedExecutionException
 
 class MainActivity : ComponentActivity() {
+    private val client = ApiClient.client
+
     private companion object {
-        const val CONNECT_TIMEOUT_MS = 5_000
-        const val READ_TIMEOUT_MS = 5_000
         const val MAX_PARALLEL_REQUESTS = 10
     }
 
@@ -36,53 +36,50 @@ class MainActivity : ComponentActivity() {
             deepLinkIntent = intent
         }
         threadPool.execute {
-            var connection: HttpURLConnection? = null
+            Log.i("Pool", "Имя потока: ${Thread.currentThread().name}")
             var categories: List<CategoryDto>? = null
             try {
-                connection =
-                    URL("https://recipes.aisprints.ru/api/category").openConnection() as HttpURLConnection
-                connection.connectTimeout = CONNECT_TIMEOUT_MS
-                connection.readTimeout = READ_TIMEOUT_MS
-                Log.i("Pool", "Выполняю запрос на потоке: ${Thread.currentThread().name}")
-                val json = connection.getInputStream().bufferedReader().use { it.readText() }
-                Log.i("Pool", "Запрос: ${connection.responseCode}")
-                Log.i("Pool", "Запрос: ${connection.responseMessage}")
-                Log.i("Pool", "Принятый json: $json")
-                categories = Json.decodeFromString<List<CategoryDto>>(json)
+                val categoryRequest =
+                    Request.Builder().url("https://recipes.aisprints.ru/api/category").build()
+                val categoryAsString = client.newCall(categoryRequest).execute().use { response ->
+                    Log.i("Pool", "Запрос: ${response.code}")
+                    Log.i("Pool", "Запрос: ${response.message}")
+                    response.body.string()
+                }
+                categories = Json.decodeFromString<List<CategoryDto>>(categoryAsString)
                 Log.i("Pool", "Полученный список после десериализации: $categories")
             } catch (e: IOException) {
-                Log.e("Pool", "Ошибка запроса категории", e)
+                Log.e("Pool", "Ошибка запроса", e)
             } catch (e: SerializationException) {
                 Log.e("Pool", "Ошибка десереализации", e)
-            } finally {
-                connection?.disconnect()
             }
-            try {
-                categories?.forEach { categories ->
+            categories?.forEach { categories ->
+                try {
                     threadPool.execute {
-                        var connection: HttpURLConnection? = null
+                        Log.i("Pool", "Имя потока: ${Thread.currentThread().name}")
+                        var recipes: List<RecipeDto>?
                         try {
-                            connection =
-                                URL("https://recipes.aisprints.ru/api/category/${categories.id}/recipes").openConnection() as HttpURLConnection
-                            connection.connectTimeout = CONNECT_TIMEOUT_MS
-                            connection.readTimeout = READ_TIMEOUT_MS
-                            val json =
-                                connection.getInputStream().bufferedReader().use { it.readText() }
-                            val recipe = Json.decodeFromString<List<RecipeDto>>(json)
-                            Log.i("Pool", "Имя потока: ${Thread.currentThread().name}")
+                            val recipesRequest = Request.Builder()
+                                .url("https://recipes.aisprints.ru/api/category/${categories.id}/recipes")
+                                .build()
+                            val recipesAsString =
+                                client.newCall(recipesRequest).execute().use { recipes ->
+                                    Log.i("Pool", "Запрос: ${recipes.code}")
+                                    Log.i("Pool", "Запрос: ${recipes.message}")
+                                    recipes.body.string()
+                                }
+                            recipes = Json.decodeFromString<List<RecipeDto>>(recipesAsString)
                             Log.i("Pool", "Название категории: ${categories.title}")
-                            Log.i("Pool", "Количество рецептов: ${recipe.size}")
+                            Log.i("Pool", "Количество рецептов: ${recipes.size}")
                         } catch (e: IOException) {
-                            Log.e("Pool", "Ошибка запроса рецептов", e)
+                            Log.e("Pool", "Ошибка запроса", e)
                         } catch (e: SerializationException) {
                             Log.e("Pool", "Ошибка десереализации", e)
-                        } finally {
-                            connection?.disconnect()
                         }
                     }
+                } catch (e: RejectedExecutionException) {
+                    Log.e("Pool", "Пул уже закрыт, раздача остановлена", e)
                 }
-            } catch (e: RejectedExecutionException) {
-                Log.e("Pool", "Пул уже закрыт, раздача остановлена", e)
             }
         }
 
