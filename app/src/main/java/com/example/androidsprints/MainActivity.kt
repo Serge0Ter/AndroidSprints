@@ -14,70 +14,56 @@ import com.example.androidsprints.core.network.Retrofit
 import com.example.androidsprints.core.network.api.RecipeApiService
 import com.example.androidsprints.data.model.CategoryDto
 import com.example.androidsprints.data.model.RecipeDto
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import java.util.concurrent.RejectedExecutionException
 import kotlin.coroutines.cancellation.CancellationException
 
 class MainActivity : ComponentActivity() {
-    private companion object {
-        const val MAX_PARALLEL_REQUESTS = 10
-    }
-
-    private val threadPool: ExecutorService = Executors.newFixedThreadPool(MAX_PARALLEL_REQUESTS)
-
     private var deepLinkIntent by mutableStateOf<Intent?>(null)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (savedInstanceState == null && intent?.data != null) {
             deepLinkIntent = intent
         }
-        threadPool.execute {
+
+        lifecycleScope.launch {
             Log.i("Pool", "Имя потока: ${Thread.currentThread().name}")
             val apiService = Retrofit.retrofit.create(RecipeApiService::class.java)
             var categories: List<CategoryDto>? = null
-            lifecycleScope.launch {
-                try {
-                    categories = apiService.getCategories()
-                } catch (e: CancellationException) {
-                    throw e
-                } catch (e: HttpException) {
-                    Log.e("Pool", "Сервер ответил ошибкой", e)
-                } catch (e: IOException) {
-                    Log.e("Pool", "Ошибка запроса", e)
-                } catch (e: Exception) {
-                    Log.e("Pool", "Ошибка десереализации", e)
+            try {
+                categories = apiService.getCategories()
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: HttpException) {
+                Log.e("Pool", "Сервер ответил ошибкой", e)
+            } catch (e: IOException) {
+                Log.e("Pool", "Ошибка запроса", e)
+            } catch (e: Exception) {
+                Log.e("Pool", "Ошибка десереализации", e)
+            }
+            coroutineScope {
+                categories?.forEach { category ->
+
+                    Log.i("Pool", "Имя потока: ${Thread.currentThread().name}")
+                    var recipes: List<RecipeDto>?
+                    try {
+                        recipes = apiService.getRecipesByCategory(category.id)
+                        Log.i("Pool", "Название категории: ${category.title}")
+                        Log.i("Pool", "Количество рецептов: ${recipes.size}")
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: HttpException) {
+                        Log.e("Pool", "Сервер ответил ошибкой", e)
+                    } catch (e: IOException) {
+                        Log.e("Pool", "Ошибка запроса", e)
+                    } catch (e: Exception) {
+                        Log.e("Pool", "Ошибка десереализации", e)
+                    }
                 }
             }
 
-            try {
-                categories?.forEach { category ->
-                    threadPool.execute {
-                        Log.i("Pool", "Имя потока: ${Thread.currentThread().name}")
-                        var recipes: List<RecipeDto>?
-                        lifecycleScope.launch {
-                            try {
-                                recipes = apiService.getRecipesByCategory(category.id)
-                                Log.i("Pool", "Название категории: ${category.title}")
-                                Log.i("Pool", "Количество рецептов: ${recipes.size}")
-                            } catch (e: CancellationException) {
-                                throw e
-                            } catch (e: HttpException) {
-                                Log.e("Pool", "Сервер ответил ошибкой", e)
-                            } catch (e: IOException) {
-                                Log.e("Pool", "Ошибка запроса", e)
-                            } catch (e: Exception) {
-                                Log.e("Pool", "Ошибка десереализации", e)
-                            }
-                        }
-                    }
-                }
-            } catch (e: RejectedExecutionException) {
-                Log.e("Pool", "Пул уже закрыт, раздача остановлена", e)
-            }
         }
 
         enableEdgeToEdge()
@@ -87,11 +73,6 @@ class MainActivity : ComponentActivity() {
                 onDeepLink = { deepLinkIntent = null }
             )
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        threadPool.shutdown()
     }
 
     override fun onNewIntent(intent: Intent) {

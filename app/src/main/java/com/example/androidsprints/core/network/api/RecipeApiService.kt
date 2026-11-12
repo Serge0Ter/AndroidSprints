@@ -13,7 +13,7 @@ interface RecipeApiService {
     suspend fun getCategory(@Path("id") categoryId: Int): CategoryDto
 
     @GET("recipe/{id}")
-    suspend fun getRecipes(@Path("recipe") recipeId: Int): RecipeDto
+    suspend fun getRecipes(@Path("id") recipeId: Int): RecipeDto
 
     @GET("category/{id}/recipes")
     suspend fun getRecipesByCategory(@Path("id") categoryId: Int): List<RecipeDto>
