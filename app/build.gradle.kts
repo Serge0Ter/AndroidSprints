@@ -42,6 +42,10 @@ android {
 }
 
 dependencies {
+    implementation(libs.retrofit2.kotlinx.serialization.converter)
+    implementation(libs.gson)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
     implementation(platform(libs.okhttp.bom))
     implementation(libs.okhttp)
     implementation(libs.kotlinx.serialization.json)

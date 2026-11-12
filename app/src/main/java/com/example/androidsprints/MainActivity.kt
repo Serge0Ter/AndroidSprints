@@ -9,20 +9,20 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.lifecycleScope
+import com.example.androidsprints.core.network.Retrofit
+import com.example.androidsprints.core.network.api.RecipeApiService
 import com.example.androidsprints.data.model.CategoryDto
 import com.example.androidsprints.data.model.RecipeDto
-import com.example.androidsprints.data.network.ApiClient
-import kotlinx.serialization.SerializationException
-import kotlinx.serialization.json.Json
-import okhttp3.Request
+import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import java.io.IOException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.RejectedExecutionException
+import kotlin.coroutines.cancellation.CancellationException
 
 class MainActivity : ComponentActivity() {
-    private val client = ApiClient.client
-
     private companion object {
         const val MAX_PARALLEL_REQUESTS = 10
     }
@@ -37,49 +37,46 @@ class MainActivity : ComponentActivity() {
         }
         threadPool.execute {
             Log.i("Pool", "Имя потока: ${Thread.currentThread().name}")
+            val apiService = Retrofit.retrofit.create(RecipeApiService::class.java)
             var categories: List<CategoryDto>? = null
-            try {
-                val categoryRequest =
-                    Request.Builder().url("https://recipes.aisprints.ru/api/category").build()
-                val categoryAsString = client.newCall(categoryRequest).execute().use { response ->
-                    Log.i("Pool", "Запрос: ${response.code}")
-                    Log.i("Pool", "Запрос: ${response.message}")
-                    response.body.string()
-                }
-                categories = Json.decodeFromString<List<CategoryDto>>(categoryAsString)
-                Log.i("Pool", "Полученный список после десериализации: $categories")
-            } catch (e: IOException) {
-                Log.e("Pool", "Ошибка запроса", e)
-            } catch (e: SerializationException) {
-                Log.e("Pool", "Ошибка десереализации", e)
-            }
-            categories?.forEach { categories ->
+            lifecycleScope.launch {
                 try {
+                    categories = apiService.getCategories()
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: HttpException) {
+                    Log.e("Pool", "Сервер ответил ошибкой", e)
+                } catch (e: IOException) {
+                    Log.e("Pool", "Ошибка запроса", e)
+                } catch (e: Exception) {
+                    Log.e("Pool", "Ошибка десереализации", e)
+                }
+            }
+
+            try {
+                categories?.forEach { category ->
                     threadPool.execute {
                         Log.i("Pool", "Имя потока: ${Thread.currentThread().name}")
                         var recipes: List<RecipeDto>?
-                        try {
-                            val recipesRequest = Request.Builder()
-                                .url("https://recipes.aisprints.ru/api/category/${categories.id}/recipes")
-                                .build()
-                            val recipesAsString =
-                                client.newCall(recipesRequest).execute().use { recipes ->
-                                    Log.i("Pool", "Запрос: ${recipes.code}")
-                                    Log.i("Pool", "Запрос: ${recipes.message}")
-                                    recipes.body.string()
-                                }
-                            recipes = Json.decodeFromString<List<RecipeDto>>(recipesAsString)
-                            Log.i("Pool", "Название категории: ${categories.title}")
-                            Log.i("Pool", "Количество рецептов: ${recipes.size}")
-                        } catch (e: IOException) {
-                            Log.e("Pool", "Ошибка запроса", e)
-                        } catch (e: SerializationException) {
-                            Log.e("Pool", "Ошибка десереализации", e)
+                        lifecycleScope.launch {
+                            try {
+                                recipes = apiService.getRecipesByCategory(category.id)
+                                Log.i("Pool", "Название категории: ${category.title}")
+                                Log.i("Pool", "Количество рецептов: ${recipes.size}")
+                            } catch (e: CancellationException) {
+                                throw e
+                            } catch (e: HttpException) {
+                                Log.e("Pool", "Сервер ответил ошибкой", e)
+                            } catch (e: IOException) {
+                                Log.e("Pool", "Ошибка запроса", e)
+                            } catch (e: Exception) {
+                                Log.e("Pool", "Ошибка десереализации", e)
+                            }
                         }
                     }
-                } catch (e: RejectedExecutionException) {
-                    Log.e("Pool", "Пул уже закрыт, раздача остановлена", e)
                 }
+            } catch (e: RejectedExecutionException) {
+                Log.e("Pool", "Пул уже закрыт, раздача остановлена", e)
             }
         }
 
