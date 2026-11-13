@@ -1,5 +1,6 @@
 package com.example.androidsprints.core.network
 
+import com.example.androidsprints.core.network.api.RecipeApiService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -16,4 +17,6 @@ object Retrofit {
         .baseUrl(NetworkConfig.BASE_URL)
         .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
         .build()
+
+    val apiService = retrofit.create(RecipeApiService::class.java)
 }

@@ -1,26 +1,31 @@
 package com.example.androidsprints.app.navigation
 
+import android.app.Application
 import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.androidsprints.core.utils.NavArgs
-import com.example.androidsprints.data.repository.RecipesRepository
+import com.example.androidsprints.data.repository.RecipesRepositoryImpl
 import com.example.androidsprints.features.categories.ui.CategoriesScreen
+import com.example.androidsprints.features.details.presentation.RecipeDetailsViewModel
 import com.example.androidsprints.features.details.ui.RecipeDetailsScreen
 import com.example.androidsprints.features.favorites.ui.FavoritesScreen
+import com.example.androidsprints.features.recipes.presentation.RecipesViewModel
 import com.example.androidsprints.features.recipes.ui.RecipesScreen
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun RecipesNavHost(
-    repository: RecipesRepository,
+    repository: RecipesRepositoryImpl,
     deepLink: Intent? = null,
     onDeepLink: () -> Unit = {},
     navController: NavHostController,
@@ -80,18 +85,30 @@ fun RecipesNavHost(
                 navArgument(NavArgs.CATEGORY_TITLE) { type = NavType.StringType },
                 navArgument(NavArgs.CATEGORY_IMAGE_URL) { type = NavType.StringType },
             )
-        ) {
+        ) { backStackEntry ->
+            val viewModel: RecipesViewModel = remember(backStackEntry) {
+                RecipesViewModel(backStackEntry.savedStateHandle, repository)
+            }
             RecipesScreen(
                 onRecipeClick = { recipeId ->
                     navController.navigate(Destination.RecipeDetails.createRoute(recipeId))
-                }
+                },
+                viewModel = viewModel
             )
         }
         composable(
             route = Destination.RecipeDetails.route,
             arguments = listOf(navArgument(NavArgs.RECIPE_ID) { type = NavType.IntType })
-        ) {
-            RecipeDetailsScreen()
+        ) { backStackEntry ->
+            val context = LocalContext.current
+            val viewModel = remember(backStackEntry) {
+                RecipeDetailsViewModel(
+                    application = context.applicationContext as Application,
+                    savedStateHandle = backStackEntry.savedStateHandle,
+                    repository = repository
+                )
+            }
+            RecipeDetailsScreen(viewModel = viewModel)
         }
     }
 }
