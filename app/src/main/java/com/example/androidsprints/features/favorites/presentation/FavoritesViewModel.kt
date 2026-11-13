@@ -4,7 +4,7 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.androidsprints.data.repository.RecipesRepository
+import com.example.androidsprints.data.repository.RecipesRepositoryStub
 import com.example.androidsprints.features.favorites.presentation.model.FavoritesUiState
 import com.example.androidsprints.features.recipes.presentation.model.toUiModel
 import com.example.androidsprints.ui.utils.FavoriteDataStoreManager
@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.update
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class FavoritesViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository = RecipesRepository()
+    private val repository = RecipesRepositoryStub()
     private val favoriteManager = FavoriteDataStoreManager(application)
     private val _retryTrigger = MutableStateFlow(0)
     val uiState: StateFlow<FavoritesUiState> = _retryTrigger.flatMapLatest {

@@ -31,39 +31,41 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.launch {
             Log.i("Pool", "Имя потока: ${Thread.currentThread().name}")
             val apiService = Retrofit.retrofit.create(RecipeApiService::class.java)
-            var categories: List<CategoryDto>? = null
-            try {
-                categories = apiService.getCategories()
+            val categories: List<CategoryDto> = try {
+                apiService.getCategories()
             } catch (e: CancellationException) {
                 throw e
             } catch (e: HttpException) {
-                Log.e("Pool", "Сервер ответил ошибкой", e)
+                Log.e("Pool", "Сервер ответил ошибкой: ${e.code()}", e)
+                return@launch
             } catch (e: IOException) {
                 Log.e("Pool", "Ошибка запроса", e)
+                return@launch
             } catch (e: Exception) {
-                Log.e("Pool", "Ошибка десереализации", e)
+                Log.e("Pool", "Не удалось загрузить категории", e)
+                return@launch
             }
             coroutineScope {
-                categories?.forEach { category ->
-
-                    Log.i("Pool", "Имя потока: ${Thread.currentThread().name}")
-                    var recipes: List<RecipeDto>?
-                    try {
-                        recipes = apiService.getRecipesByCategory(category.id)
-                        Log.i("Pool", "Название категории: ${category.title}")
-                        Log.i("Pool", "Количество рецептов: ${recipes.size}")
-                    } catch (e: CancellationException) {
-                        throw e
-                    } catch (e: HttpException) {
-                        Log.e("Pool", "Сервер ответил ошибкой", e)
-                    } catch (e: IOException) {
-                        Log.e("Pool", "Ошибка запроса", e)
-                    } catch (e: Exception) {
-                        Log.e("Pool", "Ошибка десереализации", e)
+                categories.forEach { category ->
+                    launch {
+                        Log.i("Pool", "Имя потока: ${Thread.currentThread().name}")
+                        try {
+                            val recipes: List<RecipeDto> =
+                                apiService.getRecipesByCategory(category.id)
+                            Log.i("Pool", "Название категории: ${category.title}")
+                            Log.i("Pool", "Количество рецептов: ${recipes.size}")
+                        } catch (e: CancellationException) {
+                            throw e
+                        } catch (e: HttpException) {
+                            Log.e("Pool", "Сервер ответил ошибкой", e)
+                        } catch (e: IOException) {
+                            Log.e("Pool", "Ошибка запроса", e)
+                        } catch (e: Exception) {
+                            Log.e("Pool", "Ошибка десереализации", e)
+                        }
                     }
                 }
             }
-
         }
 
         enableEdgeToEdge()
