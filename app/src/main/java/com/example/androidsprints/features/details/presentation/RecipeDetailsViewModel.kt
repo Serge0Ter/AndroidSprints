@@ -1,25 +1,29 @@
 package com.example.androidsprints.features.details.presentation
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.androidsprints.core.utils.NavArgs
-import com.example.androidsprints.data.repository.RecipesRepositoryImpl
+import com.example.androidsprints.data.repository.RecipesRepository
 import com.example.androidsprints.features.details.presentation.model.RecipeDetailsUiState
 import com.example.androidsprints.features.recipes.presentation.model.toUiModel
 import com.example.androidsprints.ui.theme.Dimens
 import com.example.androidsprints.ui.utils.FavoriteDataStoreManager
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
+import java.io.IOException
 
 class RecipeDetailsViewModel(
     application: Application,
     savedStateHandle: SavedStateHandle,
-    private val repository: RecipesRepositoryImpl,
+    private val repository: RecipesRepository,
 ) : AndroidViewModel(application) {
     private val favoriteManager = FavoriteDataStoreManager(application)
 
@@ -45,7 +49,6 @@ class RecipeDetailsViewModel(
             _uiState.value = RecipeDetailsUiState.Error
         } else {
             loadRecipe(recipeId)
-            observeFavorite(recipeId)
         }
     }
 
@@ -69,12 +72,29 @@ class RecipeDetailsViewModel(
 
     private fun loadRecipe(recipeId: Int) {
         viewModelScope.launch {
-            val loaded = repository.getRecipe(recipeId).toUiModel()
+            val loaded = try {
+                repository.getRecipe(recipeId).toUiModel()
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: HttpException) {
+                Log.e("RecipeDetailsViewModel", "Сервер ответил ошибкой: ${e.code()}", e)
+                _uiState.value = RecipeDetailsUiState.Error
+                return@launch
+            } catch (e: IOException) {
+                Log.e("RecipeDetailsViewModel", "Ошибка запроса", e)
+                _uiState.value = RecipeDetailsUiState.Error
+                return@launch
+            } catch (e: Exception) {
+                Log.e("RecipeDetailsViewModel", "Не удалось загрузить категории", e)
+                _uiState.value = RecipeDetailsUiState.Error
+                return@launch
+            }
             _uiState.value = RecipeDetailsUiState.Content(
                 recipe = loaded, currentPortions = loaded.serving.coerceIn(
                     Dimens.minCountSlider, Dimens.maxCountSlider
                 )
             )
+            observeFavorite(recipeId)
         }
     }
 

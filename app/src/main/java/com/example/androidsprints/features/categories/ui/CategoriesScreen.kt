@@ -21,13 +21,13 @@ import com.example.androidsprints.R
 import com.example.androidsprints.core.ui.EmptyMessage
 import com.example.androidsprints.core.ui.ErrorMessage
 import com.example.androidsprints.core.ui.ScreenHeader
-import com.example.androidsprints.data.repository.RecipesRepositoryImpl
+import com.example.androidsprints.data.repository.RecipesRepository
 import com.example.androidsprints.features.categories.presentation.CategoriesViewModel
 import com.example.androidsprints.ui.theme.Dimens
 
 @Composable
 fun CategoriesScreen(
-    repository: RecipesRepositoryImpl,
+    repository: RecipesRepository,
     modifier: Modifier = Modifier,
     onCategoryClick: (Int, String, String) -> Unit,
 ) {

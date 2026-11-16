@@ -13,7 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.androidsprints.core.utils.NavArgs
-import com.example.androidsprints.data.repository.RecipesRepositoryImpl
+import com.example.androidsprints.data.repository.RecipesRepository
 import com.example.androidsprints.features.categories.ui.CategoriesScreen
 import com.example.androidsprints.features.details.presentation.RecipeDetailsViewModel
 import com.example.androidsprints.features.details.ui.RecipeDetailsScreen
@@ -25,7 +25,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun RecipesNavHost(
-    repository: RecipesRepositoryImpl,
+    repository: RecipesRepository,
     deepLink: Intent? = null,
     onDeepLink: () -> Unit = {},
     navController: NavHostController,

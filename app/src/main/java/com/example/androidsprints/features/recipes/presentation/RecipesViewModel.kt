@@ -5,7 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.androidsprints.core.utils.NavArgs
-import com.example.androidsprints.data.repository.RecipesRepositoryImpl
+import com.example.androidsprints.data.repository.RecipesRepository
 import com.example.androidsprints.features.recipes.presentation.model.RecipesUiState
 import com.example.androidsprints.features.recipes.presentation.model.toUiModel
 import kotlinx.coroutines.CancellationException
@@ -18,7 +18,7 @@ import java.nio.charset.StandardCharsets
 
 class RecipesViewModel(
     private val savedStateHandle: SavedStateHandle,
-    private val repository: RecipesRepositoryImpl
+    private val repository: RecipesRepository
 ) : ViewModel() {
     private val categoryId: Int = checkNotNull(savedStateHandle[NavArgs.CATEGORY_ID])
     private val categoryTitle: String = URLDecoder.decode(
