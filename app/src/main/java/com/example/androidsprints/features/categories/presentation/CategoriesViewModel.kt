@@ -22,7 +22,6 @@ class CategoriesViewModel(private val repository: RecipesRepository) : ViewModel
     fun loadCategories() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, isError = false) }
-
             try {
                 val categories = repository.getCategories().map { dto -> dto.toUiModel() }
                 _uiState.update { it.copy(categories = categories, isLoading = false) }

@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
 import coil3.request.crossfade
@@ -28,10 +27,10 @@ import com.example.androidsprints.ui.theme.Dimens
 
 @Composable
 fun RecipesScreen(
+    viewModel: RecipesViewModel,
     onRecipeClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val viewModel: RecipesViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     Column(modifier = modifier) {
         ScreenHeader(

@@ -16,7 +16,10 @@ import kotlinx.coroutines.launch
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 
-class RecipesViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
+class RecipesViewModel(
+    private val savedStateHandle: SavedStateHandle,
+    private val repository: RecipesRepository
+) : ViewModel() {
     private val categoryId: Int = checkNotNull(savedStateHandle[NavArgs.CATEGORY_ID])
     private val categoryTitle: String = URLDecoder.decode(
         savedStateHandle[NavArgs.CATEGORY_TITLE] ?: "",
@@ -35,8 +38,6 @@ class RecipesViewModel(private val savedStateHandle: SavedStateHandle) : ViewMod
     )
     val uiState = _uiState.asStateFlow()
 
-    private val repository = RecipesRepository()
-
     init {
         loadRecipe()
     }
@@ -45,7 +46,7 @@ class RecipesViewModel(private val savedStateHandle: SavedStateHandle) : ViewMod
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, isError = false) }
             try {
-                val recipes = repository.getRecipesByCategoryId(categoryId).map { it.toUiModel() }
+                val recipes = repository.getRecipesByCategory(categoryId).map { it.toUiModel() }
                 _uiState.update {
                     it.copy(
                         recipes = recipes,

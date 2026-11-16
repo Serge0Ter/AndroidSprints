@@ -1,43 +1,31 @@
 package com.example.androidsprints.features.details.presentation
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.androidsprints.core.utils.NavArgs
 import com.example.androidsprints.data.repository.RecipesRepository
 import com.example.androidsprints.features.details.presentation.model.RecipeDetailsUiState
 import com.example.androidsprints.features.recipes.presentation.model.toUiModel
 import com.example.androidsprints.ui.theme.Dimens
 import com.example.androidsprints.ui.utils.FavoriteDataStoreManager
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
+import java.io.IOException
 
 class RecipeDetailsViewModel(
     application: Application,
     savedStateHandle: SavedStateHandle,
+    private val repository: RecipesRepository,
 ) : AndroidViewModel(application) {
-    companion object {
-        fun provideFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                RecipeDetailsViewModel(
-                    application = this[APPLICATION_KEY] as Application,
-                    savedStateHandle = this.createSavedStateHandle()
-                )
-            }
-        }
-    }
-
     private val favoriteManager = FavoriteDataStoreManager(application)
-    private val repository = RecipesRepository()
 
     private val _uiState = MutableStateFlow<RecipeDetailsUiState>(RecipeDetailsUiState.Loading)
     val uiState: StateFlow<RecipeDetailsUiState> = _uiState.asStateFlow()
@@ -61,7 +49,6 @@ class RecipeDetailsViewModel(
             _uiState.value = RecipeDetailsUiState.Error
         } else {
             loadRecipe(recipeId)
-            observeFavorite(recipeId)
         }
     }
 
@@ -85,17 +72,29 @@ class RecipeDetailsViewModel(
 
     private fun loadRecipe(recipeId: Int) {
         viewModelScope.launch {
-            val loaded = repository.getRecipeById(recipeId)?.toUiModel()
-            _uiState.value = if (loaded == null) {
-                RecipeDetailsUiState.Error
-            } else {
-                RecipeDetailsUiState.Content(
-                    recipe = loaded, currentPortions = loaded.serving.coerceIn(
-                        Dimens.minCountSlider, Dimens.maxCountSlider
-                    )
-                )
+            val loaded = try {
+                repository.getRecipe(recipeId).toUiModel()
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: HttpException) {
+                Log.e("RecipeDetailsViewModel", "Сервер ответил ошибкой: ${e.code()}", e)
+                _uiState.value = RecipeDetailsUiState.Error
+                return@launch
+            } catch (e: IOException) {
+                Log.e("RecipeDetailsViewModel", "Ошибка запроса", e)
+                _uiState.value = RecipeDetailsUiState.Error
+                return@launch
+            } catch (e: Exception) {
+                Log.e("RecipeDetailsViewModel", "Не удалось загрузить категории", e)
+                _uiState.value = RecipeDetailsUiState.Error
+                return@launch
             }
-
+            _uiState.value = RecipeDetailsUiState.Content(
+                recipe = loaded, currentPortions = loaded.serving.coerceIn(
+                    Dimens.minCountSlider, Dimens.maxCountSlider
+                )
+            )
+            observeFavorite(recipeId)
         }
     }
 
