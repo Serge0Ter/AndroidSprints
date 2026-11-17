@@ -16,7 +16,7 @@ import com.example.androidsprints.app.navigation.BottomNavigation
 import com.example.androidsprints.app.navigation.Destination
 import com.example.androidsprints.app.navigation.RecipesNavHost
 import com.example.androidsprints.app.navigation.navigateToTab
-import com.example.androidsprints.core.network.RetrofitRecipe
+import com.example.androidsprints.core.network.ApiClient
 import com.example.androidsprints.data.repository.RecipesRepositoryImpl
 import com.example.androidsprints.ui.theme.RecipesAppTheme
 import com.example.androidsprints.ui.utils.FavoriteDataStoreManager
@@ -36,7 +36,7 @@ fun RecipesApp(
             favoriteDataStoreManager
                 .getFavoriteCountFlow()
         }.collectAsState(initial = 0)
-        val apiService = remember { RetrofitRecipe.apiService }
+        val apiService = remember { ApiClient.apiService }
         val repository = remember { RecipesRepositoryImpl(apiService = apiService) }
         Scaffold(
             modifier = Modifier.fillMaxSize(),

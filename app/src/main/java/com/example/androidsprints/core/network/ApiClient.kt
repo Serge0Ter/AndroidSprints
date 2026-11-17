@@ -2,6 +2,7 @@ package com.example.androidsprints.core.network
 
 import com.example.androidsprints.core.network.api.RecipeApiService
 import com.example.androidsprints.core.utils.Constants
+import com.example.androidsprints.BuildConfig
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -9,24 +10,23 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
-import com.example.androidsprints.BuildConfig
 
-object RetrofitRecipe {
+object ApiClient {
 
-    val loggingInterceptor = HttpLoggingInterceptor().apply {
+    private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = if (BuildConfig.DEBUG) {
             HttpLoggingInterceptor.Level.BODY
         } else {
             HttpLoggingInterceptor.Level.NONE
         }
     }
-    val okHttpClient = OkHttpClient.Builder()
+    private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
         .connectTimeout(Constants.TIMEOUT_15, TimeUnit.SECONDS)  // 1. Установка соединения
         .readTimeout(Constants.TIMEOUT_30, TimeUnit.SECONDS)     // 2. Чтение ответа от сервера
         .writeTimeout(Constants.TIMEOUT_30, TimeUnit.SECONDS)    // 3. Отправка данных на сервер
         .build()
-    val json = Json {
+    private val json = Json {
         ignoreUnknownKeys = true
         coerceInputValues = true
     }
