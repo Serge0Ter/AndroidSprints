@@ -2,7 +2,6 @@ package com.example.androidsprints.features.categories.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,13 +12,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
-import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
-import coil3.request.crossfade
-import com.example.androidsprints.R
+import com.example.androidsprints.core.ui.ImageNetwork
 import com.example.androidsprints.features.categories.presentation.model.CategoryUiModel
 import com.example.androidsprints.ui.theme.Dimens
 import com.example.androidsprints.ui.theme.recipesAppTypography
@@ -41,18 +35,10 @@ fun CategoryItem(
             containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
-        AsyncImage(
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1.2f),
-            contentScale = ContentScale.Crop,
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(category.imageUrl)
-                .crossfade(true)
-                .build(),
+        ImageNetwork(
+            imageURL = category.imageUrl,
             contentDescription = null,
-            placeholder = painterResource(R.drawable.loading),
-            error = painterResource(R.drawable.error)
+            contentScale = ContentScale.Crop
         )
         Column(
             modifier = Modifier.padding(Dimens.PaddingMedium),
