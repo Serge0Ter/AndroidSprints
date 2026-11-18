@@ -38,7 +38,6 @@ fun CategoryItem(
         ImageNetwork(
             imageURL = category.imageUrl,
             contentDescription = null,
-            contentScale = ContentScale.Crop
         )
         Column(
             modifier = Modifier.padding(Dimens.PaddingMedium),

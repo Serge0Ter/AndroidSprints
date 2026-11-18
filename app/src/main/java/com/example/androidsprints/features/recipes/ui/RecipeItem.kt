@@ -41,7 +41,6 @@ fun RecipeItem(
             ImageNetwork(
                 imageURL = recipe.imageUrl,
                 contentDescription = null,
-                contentScale = ContentScale.Crop
             )
             Text(
                 text = recipe.title.uppercase(),
