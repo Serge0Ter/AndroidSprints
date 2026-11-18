@@ -24,7 +24,7 @@ abstract class RecipesDatabase : RoomDatabase() {
                     context.applicationContext,
                     RecipesDatabase::class.java,
                     "recipes_database.db"
-                ).build().also { instance = it }
+                ).fallbackToDestructiveMigration().build().also { instance = it }
             }
     }
 }
