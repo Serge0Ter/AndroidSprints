@@ -1,8 +1,8 @@
 package com.example.androidsprints.core.network
 
+import com.example.androidsprints.BuildConfig
 import com.example.androidsprints.core.network.api.RecipeApiService
 import com.example.androidsprints.core.utils.Constants
-import com.example.androidsprints.BuildConfig
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
