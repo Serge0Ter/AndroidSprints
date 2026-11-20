@@ -7,6 +7,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -73,13 +77,16 @@ fun RecipesNavHost(
             )
         }
         composable(Destination.Favorites.route) { backStackEntry ->
-            val context = LocalContext.current
-            val viewModel = remember(backStackEntry) {
-                FavoritesViewModel(
-                    application = context.applicationContext as Application,
-                    repository = repository
-                )
+            val factory = remember(repository) {
+                viewModelFactory {
+                    initializer {
+                        val app =
+                            this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as Application
+                        FavoritesViewModel(app, repository)
+                    }
+                }
             }
+            val viewModel: FavoritesViewModel = viewModel(factory = factory)
             FavoritesScreen(
                 viewModel = viewModel,
                 onRecipeClick = { recipeId ->
