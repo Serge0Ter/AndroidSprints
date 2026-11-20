@@ -17,6 +17,7 @@ import com.example.androidsprints.data.repository.RecipesRepository
 import com.example.androidsprints.features.categories.ui.CategoriesScreen
 import com.example.androidsprints.features.details.presentation.RecipeDetailsViewModel
 import com.example.androidsprints.features.details.ui.RecipeDetailsScreen
+import com.example.androidsprints.features.favorites.presentation.FavoritesViewModel
 import com.example.androidsprints.features.favorites.ui.FavoritesScreen
 import com.example.androidsprints.features.recipes.presentation.RecipesViewModel
 import com.example.androidsprints.features.recipes.ui.RecipesScreen
@@ -71,8 +72,16 @@ fun RecipesNavHost(
                 },
             )
         }
-        composable(Destination.Favorites.route) {
+        composable(Destination.Favorites.route) { backStackEntry ->
+            val context = LocalContext.current
+            val viewModel = remember(backStackEntry) {
+                FavoritesViewModel(
+                    application = context.applicationContext as Application,
+                    repository = repository
+                )
+            }
             FavoritesScreen(
+                viewModel = viewModel,
                 onRecipeClick = { recipeId ->
                     navController.navigate(Destination.RecipeDetails.createRoute(recipeId))
                 }

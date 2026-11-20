@@ -38,7 +38,7 @@ fun RecipesApp(
                 .getFavoriteCountFlow()
         }.collectAsState(initial = 0)
         val apiService = remember { ApiClient.apiService }
-        val database = RecipesDatabase.getInstance(context)
+        val database = remember { RecipesDatabase.buildDatabase(context) }
         val repository = remember {
             RecipesRepositoryImpl(
                 apiService = apiService,
