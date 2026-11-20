@@ -46,13 +46,15 @@ class RecipesViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, isError = false) }
             try {
-                val recipes = repository.getRecipesByCategory(categoryId).map { it.toUiModel() }
-                _uiState.update {
-                    it.copy(
-                        recipes = recipes,
-                        isLoading = false
-                    )
+                repository.getRecipesByCategory(categoryId).collect { recipes ->
+                    _uiState.update {
+                        it.copy(
+                            recipes = recipes.map { it.toUiModel() },
+                            isLoading = false
+                        )
+                    }
                 }
+
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {

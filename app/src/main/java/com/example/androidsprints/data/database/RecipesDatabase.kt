@@ -11,7 +11,7 @@ import com.example.androidsprints.data.database.dao.RecipesDao
 import com.example.androidsprints.data.database.entity.CategoryEntity
 import com.example.androidsprints.data.database.entity.RecipeEntity
 
-@ColumnTypeConverters(Converters::class)
+//@ColumnTypeConverters(Converters::class)
 @Database(
     entities = [CategoryEntity::class, RecipeEntity::class],
     version = 2,
