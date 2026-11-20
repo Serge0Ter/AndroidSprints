@@ -7,6 +7,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -17,6 +21,7 @@ import com.example.androidsprints.data.repository.RecipesRepository
 import com.example.androidsprints.features.categories.ui.CategoriesScreen
 import com.example.androidsprints.features.details.presentation.RecipeDetailsViewModel
 import com.example.androidsprints.features.details.ui.RecipeDetailsScreen
+import com.example.androidsprints.features.favorites.presentation.FavoritesViewModel
 import com.example.androidsprints.features.favorites.ui.FavoritesScreen
 import com.example.androidsprints.features.recipes.presentation.RecipesViewModel
 import com.example.androidsprints.features.recipes.ui.RecipesScreen
@@ -71,8 +76,19 @@ fun RecipesNavHost(
                 },
             )
         }
-        composable(Destination.Favorites.route) {
+        composable(Destination.Favorites.route) { backStackEntry ->
+            val factory = remember(repository) {
+                viewModelFactory {
+                    initializer {
+                        val app =
+                            this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as Application
+                        FavoritesViewModel(app, repository)
+                    }
+                }
+            }
+            val viewModel: FavoritesViewModel = viewModel(factory = factory)
             FavoritesScreen(
+                viewModel = viewModel,
                 onRecipeClick = { recipeId ->
                     navController.navigate(Destination.RecipeDetails.createRoute(recipeId))
                 }

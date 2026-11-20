@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.androidsprints.R
 import com.example.androidsprints.core.ui.EmptyMessage
 import com.example.androidsprints.core.ui.ErrorMessage
@@ -27,10 +26,10 @@ import com.example.androidsprints.ui.theme.Dimens
 
 @Composable
 fun FavoritesScreen(
+    viewModel: FavoritesViewModel,
     onRecipeClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val viewModel: FavoritesViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     Column(modifier = modifier) {
         ScreenHeader(

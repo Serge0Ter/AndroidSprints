@@ -1,12 +1,9 @@
 package com.example.androidsprints.data.database.converter
 
-import androidx.room3.ColumnTypeConverter
+import kotlinx.serialization.json.Json
 
-class Converters {
-    @ColumnTypeConverter
-    fun fromString(value: String): List<String> =
-        if (value.isEmpty()) emptyList() else value.split("|||")
+object Converters {
+    inline fun <reified T> listToJson(value: List<T>): String = Json.encodeToString(value)
 
-    @ColumnTypeConverter
-    fun fromList(value: List<String>): String = value.joinToString("|||")
+    inline fun <reified T> jsonToList(value: String): List<T> = Json.decodeFromString(value)
 }

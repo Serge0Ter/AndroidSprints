@@ -4,6 +4,7 @@ import androidx.room3.Dao
 import androidx.room3.Insert
 import androidx.room3.OnConflictStrategy
 import androidx.room3.Query
+import androidx.room3.Upsert
 import com.example.androidsprints.data.database.entity.CategoryEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -12,6 +13,6 @@ interface CategoryDao {
     @Query("SELECT * FROM categories ORDER BY name")
     fun getAllCategories(): Flow<List<CategoryEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertCategories(categories: List<CategoryEntity>)
 }
