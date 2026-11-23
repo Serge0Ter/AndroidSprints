@@ -4,6 +4,7 @@ import androidx.room3.Dao
 import androidx.room3.Insert
 import androidx.room3.OnConflictStrategy
 import androidx.room3.Query
+import androidx.room3.Upsert
 import com.example.androidsprints.data.database.entity.RecipeEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -12,7 +13,7 @@ interface RecipesDao {
     @Query("SELECT * FROM recipes ORDER BY title")
     fun getAllRecipes(): Flow<List<RecipeEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertRecipes(recipes: List<RecipeEntity>)
 
     @Query("SELECT * FROM recipes WHERE categoryId = :categoryId")

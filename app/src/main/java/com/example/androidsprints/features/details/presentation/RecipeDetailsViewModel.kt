@@ -11,14 +11,13 @@ import com.example.androidsprints.features.details.presentation.model.RecipeDeta
 import com.example.androidsprints.features.recipes.presentation.model.toUiModel
 import com.example.androidsprints.ui.theme.Dimens
 import com.example.androidsprints.ui.utils.FavoriteDataStoreManager
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
-import java.io.IOException
 
 class RecipeDetailsViewModel(
     application: Application,
@@ -26,88 +25,43 @@ class RecipeDetailsViewModel(
     private val repository: RecipesRepository,
 ) : AndroidViewModel(application) {
     private val favoriteManager = FavoriteDataStoreManager(application)
-
-    private val _uiState = MutableStateFlow<RecipeDetailsUiState>(RecipeDetailsUiState.Loading)
-    val uiState: StateFlow<RecipeDetailsUiState> = _uiState.asStateFlow()
-//    val uiState: StateFlow<RecipeDetailsUiState> = recipe
-//        ?.let { r ->
-//            combine(portion, favoriteManager.isFavoriteFlow(r.id)) { currentPortion, isFavorite ->
-//                RecipeDetailsUiState.Content(
-//                    recipe = r.copy(isFavorite = isFavorite),
-//                    currentPortions = currentPortion
-//                )
-//            }
-//        }?.stateIn(
-//            scope = viewModelScope,
-//            started = SharingStarted.WhileSubscribed(5_000),
-//            initialValue = RecipeDetailsUiState.Loading
-//        ) ?: MutableStateFlow(RecipeDetailsUiState.Error)
-
-    init {
-        val recipeId = savedStateHandle.get<Int>(NavArgs.RECIPE_ID)
-        if (recipeId == null) {
-            _uiState.value = RecipeDetailsUiState.Error
-        } else {
-            loadRecipe(recipeId)
+    private val userPortions = MutableStateFlow<Int?>(null)
+    private val recipeId: Int? = savedStateHandle.get<Int>(NavArgs.RECIPE_ID)
+    val uiState: StateFlow<RecipeDetailsUiState> = recipeId?.let { id ->
+        combine(
+            repository.getRecipe(id),
+            favoriteManager.isFavoriteFlow(id),
+            userPortions
+        ) { dto, isFavorite, portions ->
+            if (dto == null) {
+                RecipeDetailsUiState.Loading
+            } else {
+                RecipeDetailsUiState.Content(
+                    recipe = dto.toUiModel().copy(isFavorite = isFavorite),
+                    currentPortions = portions ?: dto.serving.coerceIn(
+                        Dimens.minCountSlider, Dimens.maxCountSlider
+                    )
+                )
+            }
         }
-    }
+            .catch {
+                Log.e("RecipeDetailsViewModel", "uiState: ${it.message}", it)
+                emit(RecipeDetailsUiState.Error)
+            }
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(5_000),
+                RecipeDetailsUiState.Loading
+            )
+    } ?: MutableStateFlow(RecipeDetailsUiState.Error)
 
     fun updatePortions(count: Int) {
-        val state = _uiState.value
-        if (state is RecipeDetailsUiState.Content) _uiState.value = state.copy(
-            currentPortions = count.coerceIn(
-                Dimens.minCountSlider,
-                Dimens.maxCountSlider
-            )
-        )
+        userPortions.value = count.coerceIn(Dimens.minCountSlider, Dimens.maxCountSlider)
     }
 
     fun toggleFavorite() = viewModelScope.launch {
-        val state = _uiState.value
-        if (state !is RecipeDetailsUiState.Content) return@launch
-        val id = state.recipe.id
-        if (state.recipe.isFavorite) favoriteManager.removeFavorite(id)
-        else favoriteManager.addFavorite(id)
+        val state = uiState.value as? RecipeDetailsUiState.Content ?: return@launch
+        if (state.recipe.isFavorite) favoriteManager.removeFavorite(state.recipe.id)
+        else favoriteManager.addFavorite(state.recipe.id)
     }
-
-    private fun loadRecipe(recipeId: Int) {
-        viewModelScope.launch {
-            val loaded = try {
-                repository.getRecipe(recipeId).toUiModel()
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: HttpException) {
-                Log.e("RecipeDetailsViewModel", "Сервер ответил ошибкой: ${e.code()}", e)
-                _uiState.value = RecipeDetailsUiState.Error
-                return@launch
-            } catch (e: IOException) {
-                Log.e("RecipeDetailsViewModel", "Ошибка запроса", e)
-                _uiState.value = RecipeDetailsUiState.Error
-                return@launch
-            } catch (e: Exception) {
-                Log.e("RecipeDetailsViewModel", "Не удалось загрузить категории", e)
-                _uiState.value = RecipeDetailsUiState.Error
-                return@launch
-            }
-            _uiState.value = RecipeDetailsUiState.Content(
-                recipe = loaded, currentPortions = loaded.serving.coerceIn(
-                    Dimens.minCountSlider, Dimens.maxCountSlider
-                )
-            )
-            observeFavorite(recipeId)
-        }
-    }
-
-    private fun observeFavorite(recipeId: Int) {
-        viewModelScope.launch {
-            favoriteManager.isFavoriteFlow(recipeId).collect { isFavorite ->
-                _uiState.update { state ->
-                    if (state is RecipeDetailsUiState.Content) {
-                        state.copy(recipe = state.recipe.copy(isFavorite = isFavorite))
-                    } else state
-                }
-            }
-        }
-    }
-
 }

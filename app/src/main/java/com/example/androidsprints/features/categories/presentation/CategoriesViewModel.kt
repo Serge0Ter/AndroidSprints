@@ -26,7 +26,7 @@ class CategoriesViewModel(private val repository: RecipesRepository) : ViewModel
                 repository.getCategories().collect { dtos ->
                     _uiState.update {
                         it.copy(
-                            categories = dtos.map { it.toUiModel() },
+                            categories = dtos.map { dto -> dto.toUiModel() },
                             isLoading = false
                         )
                     }

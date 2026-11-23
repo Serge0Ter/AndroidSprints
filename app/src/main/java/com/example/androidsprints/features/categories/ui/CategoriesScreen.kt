@@ -11,7 +11,6 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -21,17 +20,15 @@ import com.example.androidsprints.R
 import com.example.androidsprints.core.ui.EmptyMessage
 import com.example.androidsprints.core.ui.ErrorMessage
 import com.example.androidsprints.core.ui.ScreenHeader
-import com.example.androidsprints.data.repository.RecipesRepository
 import com.example.androidsprints.features.categories.presentation.CategoriesViewModel
 import com.example.androidsprints.ui.theme.Dimens
 
 @Composable
 fun CategoriesScreen(
-    repository: RecipesRepository,
+    viewModel: CategoriesViewModel,
     modifier: Modifier = Modifier,
     onCategoryClick: (Int, String, String) -> Unit,
 ) {
-    val viewModel: CategoriesViewModel = remember { CategoriesViewModel(repository) }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     Column(modifier = modifier) {
         ScreenHeader(
