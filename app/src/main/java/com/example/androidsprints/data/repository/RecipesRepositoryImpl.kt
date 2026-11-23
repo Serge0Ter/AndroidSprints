@@ -13,7 +13,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class RecipesRepositoryImpl(
     private val apiService: RecipeApiService,
@@ -44,12 +43,16 @@ class RecipesRepositoryImpl(
         }
     }
 
-    override suspend fun getRecipe(recipeId: Int): RecipeDto {
-        try {
-            return withContext(Dispatchers.IO) { apiService.getRecipes(recipeId) }
-        } catch (e: Exception) {
-            throw e
+    override fun getRecipe(recipeId: Int): Flow<RecipeDto?> {
+        externalScope.launch {
+            try {
+                val fresh = apiService.getRecipes(recipeId)
+                Log.d("RecipesRepositoryImpl", "Детали рецепта получены из API")
+            } catch (e: Exception) {
+                Log.e("RecipesRepositoryImpl", "Ошибка обновления: ${e.message}")
+            }
         }
+        return recipeDao.getRecipe(recipeId).map { entity -> entity?.toDto() }
     }
 
     override fun getRecipesByCategory(categoryId: Int): Flow<List<RecipeDto>> {
