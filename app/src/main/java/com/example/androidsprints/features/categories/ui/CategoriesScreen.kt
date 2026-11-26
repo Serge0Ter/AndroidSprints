@@ -33,8 +33,8 @@ fun CategoriesScreen(
 ) {
     val repository =
         (LocalContext.current.applicationContext as RecipeApplication).appContainer.recipesRepository
-    val viewModelFactory = remember { CategoriesViewModelFactory(repository = repository) }
-    val viewModel = viewModelFactory.create()
+    val viewModel =
+        remember(repository) { CategoriesViewModelFactory(repository = repository).create() }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     Column(modifier = modifier) {
         ScreenHeader(
