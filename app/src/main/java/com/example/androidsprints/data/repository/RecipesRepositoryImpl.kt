@@ -11,6 +11,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
@@ -48,6 +49,12 @@ class RecipesRepositoryImpl(
             try {
                 val fresh = apiService.getRecipes(recipeId)
                 Log.d("RecipesRepositoryImpl", "Детали рецепта получены из API")
+                val cached = recipeDao.getRecipe(recipeId).first()
+                if (cached != null) {
+                    recipeDao.insertRecipes(listOf(fresh.toEntity(cached.categoryId)))
+                } else {
+                    Log.w("RecipesRepositoryImpl", "Рецепт $recipeId отсутствует в кеше — категория неизвестна, вставка пропущена")
+                }
             } catch (e: Exception) {
                 Log.e("RecipesRepositoryImpl", "Ошибка обновления: ${e.message}")
             }

@@ -1,24 +1,20 @@
 package com.example.androidsprints.app.navigation
 
-import android.app.Application
 import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.createSavedStateHandle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.androidsprints.app.di.FavoritesViewModelFactory
+import com.example.androidsprints.app.di.RecipeApplication
+import com.example.androidsprints.app.di.RecipeDetailsViewModelFactory
+import com.example.androidsprints.app.di.RecipesViewModelFactory
 import com.example.androidsprints.core.utils.NavArgs
-import com.example.androidsprints.data.repository.RecipesRepository
-import com.example.androidsprints.features.categories.presentation.CategoriesViewModel
 import com.example.androidsprints.features.categories.ui.CategoriesScreen
 import com.example.androidsprints.features.details.presentation.RecipeDetailsViewModel
 import com.example.androidsprints.features.details.ui.RecipeDetailsScreen
@@ -32,7 +28,7 @@ import kotlin.time.Duration.Companion.milliseconds
 @Composable
 fun RecipesNavHost(
     modifier: Modifier = Modifier,
-    repository: RecipesRepository,
+    application: RecipeApplication,
     deepLink: Intent? = null,
     onDeepLink: () -> Unit = {},
     navController: NavHostController,
@@ -64,14 +60,7 @@ fun RecipesNavHost(
         modifier = modifier
     ) {
         composable(Destination.Categories.route) {
-            val factory = remember(repository) {
-                viewModelFactory {
-                    initializer { CategoriesViewModel(repository) }
-                }
-            }
-            val viewModel: CategoriesViewModel = viewModel(factory = factory)
             CategoriesScreen(
-                viewModel = viewModel,
                 onCategoryClick = { categoryId, categoryTitle, categoryImage ->
                     navController.navigate(
                         Destination.Recipes.createRoute(
@@ -83,17 +72,13 @@ fun RecipesNavHost(
                 },
             )
         }
-        composable(Destination.Favorites.route) {
-            val factory = remember(repository) {
-                viewModelFactory {
-                    initializer {
-                        val app =
-                            this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as Application
-                        FavoritesViewModel(app, repository)
-                    }
-                }
+        composable(Destination.Favorites.route) { backStackEntry ->
+            val viewModel: FavoritesViewModel = remember(backStackEntry) {
+                FavoritesViewModelFactory(
+                    application = application,
+                    repository = application.appContainer.recipesRepository
+                ).create()
             }
-            val viewModel: FavoritesViewModel = viewModel(factory = factory)
             FavoritesScreen(
                 viewModel = viewModel,
                 onRecipeClick = { recipeId ->
@@ -108,18 +93,13 @@ fun RecipesNavHost(
                 navArgument(NavArgs.CATEGORY_TITLE) { type = NavType.StringType },
                 navArgument(NavArgs.CATEGORY_IMAGE_URL) { type = NavType.StringType },
             )
-        ) {
-            val factory = remember(repository) {
-                viewModelFactory {
-                    initializer {
-                        RecipesViewModel(
-                            savedStateHandle = createSavedStateHandle(),
-                            repository = repository
-                        )
-                    }
-                }
+        ) { backStackEntry ->
+            val viewModel: RecipesViewModel = remember(backStackEntry) {
+                RecipesViewModelFactory(
+                    savedStateHandle = backStackEntry.savedStateHandle,
+                    repository = application.appContainer.recipesRepository
+                ).create()
             }
-            val viewModel: RecipesViewModel = viewModel(factory = factory)
             RecipesScreen(
                 onRecipeClick = { recipeId ->
                     navController.navigate(Destination.RecipeDetails.createRoute(recipeId))
@@ -130,21 +110,14 @@ fun RecipesNavHost(
         composable(
             route = Destination.RecipeDetails.route,
             arguments = listOf(navArgument(NavArgs.RECIPE_ID) { type = NavType.IntType })
-        ) {
-            val factory = remember(repository) {
-                viewModelFactory {
-                    initializer {
-                        val app =
-                            this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as Application
-                        RecipeDetailsViewModel(
-                            application = app,
-                            savedStateHandle = createSavedStateHandle(),
-                            repository = repository
-                        )
-                    }
-                }
+        ) { backStackEntry ->
+            val viewModel: RecipeDetailsViewModel = remember(backStackEntry) {
+                RecipeDetailsViewModelFactory(
+                    application = application,
+                    savedStateHandle = backStackEntry.savedStateHandle,
+                    repository = application.appContainer.recipesRepository
+                ).create()
             }
-            val viewModel: RecipeDetailsViewModel = viewModel(factory = factory)
             RecipeDetailsScreen(viewModel = viewModel)
 
         }
